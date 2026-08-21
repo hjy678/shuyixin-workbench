@@ -596,6 +596,70 @@
     .form-group { margin-bottom:16px; }
     .form-group label { display:block; font-size:14px; color:var(--text-secondary); margin-bottom:7px; font-weight:600; }
 
+    /* ============== 题目三色分层（题号·题干·答题区视觉分层，V1.2） ============== */
+    .q-card {
+      position: relative;
+      padding: 14px 16px 12px;
+      margin-bottom: 18px;
+      background: linear-gradient(135deg, #ffffff 0%, #faf6ff 60%, #fff5fa 100%);
+      border: 1.5px solid #efe1ff;
+      border-radius: 16px;
+      box-shadow: 0 4px 14px rgba(192,132,252,.08);
+    }
+    .q-card .q-row {
+      display: flex; align-items: flex-start; gap: 10px;
+      margin-bottom: 10px;
+      color: var(--text);
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1.7;
+    }
+    .q-card .q-num {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 28px; height: 28px; padding: 0 10px;
+      background: linear-gradient(135deg, #a594f0 0%, #ff85a7 100%);
+      color: #fff;
+      border-radius: 999px;
+      font-size: 14px; font-weight: 800;
+      box-shadow: 0 3px 8px rgba(192,132,252,.35);
+      flex-shrink: 0;
+    }
+    .q-card .q-stem {
+      flex: 1; color: var(--text); word-break: break-word;
+    }
+    .q-card .q-stem sub, .q-card .q-stem sup { color: var(--purple-deep, #7a63d6); }
+    .q-card .q-pill {
+      display: inline-block; padding: 2px 10px; border-radius: 999px;
+      font-size: 12px; font-weight: 700;
+      background: var(--pink-light, #ffe8f0); color: var(--cherry-deep, #d96b91);
+      vertical-align: middle; margin-right: 6px;
+    }
+    /* 答题区 / 填空题 —— 浅黄虚线独立卡 */
+    .q-card input[type="text"]:not(.sound-btn) {
+      background: linear-gradient(135deg, #fff8e8 0%, #fff2cf 100%) !important;
+      border: 1.5px dashed #d9b870 !important;
+      border-radius: 10px !important;
+      padding: 8px 14px !important;
+      font-weight: 700; color: var(--text); font-size: 14px;
+      margin-top: 4px;
+    }
+    .q-card input[type="text"]:focus { outline: 2px solid rgba(212,167,44,.4); }
+    /* 选项区微调（选项本身就是独立胶囊，不用再外套） */
+    .q-card .quiz-options { margin-top: 6px; }
+    /* 反馈结果 */
+    .q-card .quiz-result { margin-top: 10px; padding: 8px 12px; border-radius: 10px; font-weight: 700; }
+    /* 暗色兼容（themes：项目里目前只有亮色，但 q-card 内部仍能自适应） */
+
+    /* 看拼音写汉字/单词听写 —— 浅紫底独立行（沿用 q-card 视觉） */
+    .dict-card {
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+      padding: 10px 14px;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, #fff 0%, #faf6ff 100%);
+      border: 1.5px solid #efe1ff;
+      border-radius: 14px;
+    }
+
     /* Buttons */
     .btn { padding:11px 20px; border-radius:999px; border:none; cursor:pointer; font-weight:600; transition:all .2s; font-size:15px; }
     .btn:active { transform:scale(0.97); }
@@ -885,7 +949,7 @@
     ];
 
     const STORAGE_KEY = 'syx-g3-workbench-v1';
-    const APP_VERSION = '2026-08-21-quiz-overhaul'; // 题库全面整改：数学144生成器(8题/单元题型多样)、英语125题、语文209题(13类)，题型去重，消除重复
+    const APP_VERSION = '2026-08-21-quiz-visual-layered'; // V1.2 题目视觉分层：题号胶囊/题干深色/答题区浅黄虚线+卡片，题库延续V1.1
 
     /* 全局错误可视化：任何未捕获的报错都会显示在页面顶部红条，便于排查 */
     function showErr(msg) {
@@ -921,8 +985,8 @@
           <div style="font-size:15px; line-height:1.9; color:var(--text); background:#fff; padding:16px; border-radius:var(--radius-sm); margin-bottom:16px;">${item.text}</div>
           <div id="reading-questions">
             ${item.questions.map((q, qi)=>`
-              <div class="form-group" style="margin-bottom:18px;">
-                <label>${qi+1}. ${q.q}</label>
+              <div class="form-group q-card" style="margin-bottom:18px;">
+                <div class="q-row"><span class="q-num">${qi+1}</span><span class="q-stem">${esc(q.q)}</span></div>
                 <div class="quiz-options">
                   ${q.options.map((opt, oi)=>`
                     <input type="radio" name="rc_${key}_${qi}" id="rc_${key}_${qi}_${oi}" value="${oi}" onchange="selectReading('${key}',${qi},${oi})" style="position:absolute;opacity:0;width:0;height:0;">
@@ -1018,8 +1082,8 @@
           <div style="font-size:15px; line-height:1.9; color:var(--text); background:#fff; padding:16px; border-radius:var(--radius-sm); margin-bottom:16px;">${item.text}</div>
           <div id="cl-questions">
             ${item.questions.map((q, qi) => `
-              <div class="form-group" style="margin-bottom:18px;">
-                <label>${qi+1}. ${q.q}</label>
+              <div class="form-group q-card" style="margin-bottom:18px;">
+                <div class="q-row"><span class="q-num">${qi+1}</span><span class="q-stem">${esc(q.q)}</span></div>
                 <div class="quiz-options">
                   ${q.options.map((opt, oi) => `
                     <input type="radio" name="cl_${qi}" id="cl_${qi}_${oi}" value="${oi}" onchange="selectClassic(${qi},${oi})" style="position:absolute;opacity:0;width:0;height:0;">
@@ -1487,7 +1551,7 @@ function genChinesePractice(path) {
         } else if (oi === st.sel[qi]) cls += ' selected';
         return `<input type="radio" name="cp_${key}_${qi}" id="cp_${key}_${qi}_${oi}" value="${oi}" onchange="selectChinesePractice('${key}',${qi},${oi})" style="position:absolute;opacity:0;width:0;height:0;"><label for="cp_${key}_${qi}_${oi}" class="${cls}" id="cpl_${key}_${qi}_${oi}">${esc(opt)}</label>`;
       }).join('');
-      const body = st.qs.map((q, qi) => `<div class="form-group" style="margin-bottom:14px;"><label>${qi+1}. ${esc(q.q)}</label><div class="quiz-options">${optsHTML(qi)}</div></div>`).join('');
+      const body = st.qs.map((q, qi) => `<div class="form-group q-card" style="margin-bottom:14px;"><div class="q-row"><span class="q-num">${qi+1}</span><span class="q-stem">${esc(q.q)}</span></div><div class="quiz-options">${optsHTML(qi)}</div></div>`).join('');
       const actions = !st.checked
         ? `<button class="btn btn-success" onclick="checkChinesePractice('${key}')">提交批改</button>`
         : `<button class="btn btn-light" onclick="renewChinesePractice('${key}')">换一批</button>`;
@@ -2573,8 +2637,8 @@ function genChinesePractice(path) {
           <p style="font-size:14px;color:var(--text-secondary);margin-bottom:12px;">直接输入答案，提交后自动批改，全对奖励 10 积分。</p>
           <div id="speed-list">
             ${sp.qs.map((item, i) => `
-              <div class="form-group" style="margin-bottom:10px;">
-                <label style="display:inline-block;min-width:140px;">${i+1}. ${item.q}</label>
+              <div class="form-group q-card" style="margin-bottom:10px;">
+                <div class="q-row"><span class="q-num">${i+1}</span><span class="q-stem">${item.q}</span></div>
                 <input type="number" id="speed-${i}" value="${esc(sp.answers[i])}"
                   ${sp.checked ? 'disabled' : ''}
                   oninput="S.math.speed.answers[${i}]=this.value;save();"
@@ -2670,8 +2734,8 @@ function genChinesePractice(path) {
             <span class="pill" style="background:var(--red);color:#fff;">⏱ <b id="timed-timer">${t.remaining}</b> 秒</span></div>
           <div id="timed-list">
             ${t.qs.map((item,i)=>`
-              <div class="form-group" style="margin-bottom:10px;">
-                <label style="display:inline-block;min-width:140px;">${i+1}. ${item.q}</label>
+              <div class="form-group q-card" style="margin-bottom:10px;">
+                <div class="q-row"><span class="q-num">${i+1}</span><span class="q-stem">${item.q}</span></div>
                 <input type="number" id="timed-${i}" value="${esc(t.answers[i])}"
                   oninput="S.math.timed.answers[${i}]=this.value;save();"
                   onkeydown="if(event.key==='Enter')submitTimedTrain(false)"
@@ -3685,8 +3749,8 @@ function genChinesePractice(path) {
         sim.forEach((q)=>{ if (String(xscSelStr(q))===String(q.ans)) correct++; });
         html += `<div class="section-title" style="margin:14px 0 10px;"><span class="icon" style="background:var(--red)">📝</span><span>综合模拟卷（语数英混合 ${sim.length} 题）</span></div>`;
         html += sim.map((q,i)=>`
-          <div class="form-group" style="margin-bottom:16px;">
-            <label>${i+1}. <span class="pill" style="background:${q.subject==='数学'?'var(--orange-light)':q.subject==='语文'?'var(--pink-light)':'var(--purple-light)'};color:#555;">${q.subject}</span> ${esc(q.q)}</label>
+          <div class="form-group q-card" style="margin-bottom:16px;">
+            <div class="q-row"><span class="q-num">${i+1}</span><span class="q-pill" style="background:${q.subject==='数学'?'var(--orange-light)':q.subject==='语文'?'var(--pink-light)':'var(--purple-light)'};color:#555;">${q.subject}</span> <span class="q-stem">${esc(q.q)}</span></div>
             ${xscPassage(q.passage)}
             ${q.type==='choice'
               ? xscChoiceOpts(q, 'xs'+i, 'selectXSCSim('+i+',', q.checked)
@@ -3700,7 +3764,7 @@ function genChinesePractice(path) {
         const q = st.q;
         html += `<div class="card" style="border:1px solid #ffd9d9;margin-top:8px;">
           <div class="card-header"><span class="icon" style="background:var(--red)">${q.subject==='数学'?'🔢':q.subject==='语文'?'📖':'🔤'}</span><h3>${q.subject}题</h3><span class="pill">${q.subject}</span></div>
-          <div class="form-group"><label>${esc(q.q)}</label>`;
+          <div class="form-group q-card"><div class="q-row"><span class="q-stem">${esc(q.q)}</span></div>`;
         html += xscPassage(q.passage);
         if (q.type==='choice') {
           html += xscChoiceOpts(q, 'xsc', 'selectXSC', q.checked);
@@ -3862,9 +3926,9 @@ function genChinesePractice(path) {
     function mockQuestionHTML(subject, q, i){
       const name = `mk_${subject}_${i}`;
       if (q.options){
-        return `<div class="form-group" style="margin-bottom:16px;">
+        return `<div class="form-group q-card" style="margin-bottom:16px;">
           ${q.passage ? `<div style="background:#f4f6fb;border-left:4px solid var(--purple,#7c4dff);padding:10px 12px;border-radius:8px;margin-bottom:8px;font-size:14px;line-height:1.7;color:var(--text,#222);">${esc(q.passage)}</div>` : ''}
-          <label>${i+1}. ${esc(q.q)} ${q.audio?`<button class="btn btn-mini" onclick="event.stopPropagation();speak('${esc(q.audio).replace(/'/g,"\\'")}','en-US')">🔊</button>`:''}</label>
+          <div class="q-row"><span class="q-num">${i+1}</span><span class="q-stem">${esc(q.q)}</span>${q.audio?`<button class="btn btn-mini" onclick="event.stopPropagation();speak('${esc(q.audio).replace(/'/g,"\\'")}','en-US')" style="margin-left:auto;">🔊</button>`:''}</div>
           <div class="quiz-options">
             ${q.options.map((opt,oi)=>`
               <input type="radio" name="${name}" id="${name}_${oi}" value="${oi}" onchange="selectMock('${subject}',${i},${oi})" style="position:absolute;opacity:0;width:0;height:0;">
@@ -3873,8 +3937,8 @@ function genChinesePractice(path) {
           </div>
         </div>`;
       }
-      return `<div class="form-group" style="margin-bottom:16px;">
-        <label>${i+1}. ${esc(q.q)}</label>
+      return `<div class="form-group q-card" style="margin-bottom:16px;">
+        <div class="q-row"><span class="q-num">${i+1}</span><span class="q-stem">${esc(q.q)}</span></div>
         <input type="text" id="${name}_t" value="${esc(q.sel||'')}" ${q.checked?'disabled':''}
           oninput="S['${subject}'].mock[${i}].sel=this.value;save();"
           onkeydown="if(event.key==='Enter')checkMockExam('${subject}')">
@@ -3978,21 +4042,21 @@ function genChinesePractice(path) {
     function dictItemHTML(mode, it, i){
       const rightMsg = `<span style="margin-left:8px;font-weight:700;color:${it.ok?'var(--green)':'var(--red)'}">${it.ok?'✅':'❌ '+esc(it.answer)}</span>`;
       if (mode==='poem'){
-        return `<div class="form-group" style="margin-bottom:14px;">
-          <label>${esc(it.prompt)}：${esc(it.blanked)}</label>
+        return `<div class="form-group q-card" style="margin-bottom:14px;">
+          <div class="q-row"><span class="q-stem">${esc(it.prompt)}：${esc(it.blanked)}</span></div>
           <input type="text" id="dict_${i}" value="${esc(it.input||'')}" ${it.checked?'disabled':''}
             oninput="S.chinese.dictation.items[${i}].input=this.value;save();"
             onkeydown="if(event.key==='Enter')checkDictation()"
-            placeholder="填被遮住的字" style="width:200px;display:inline-block;margin-left:8px;">
+            placeholder="填被遮住的字" style="width:200px;display:inline-block;">
           ${it.checked?rightMsg:''}
         </div>`;
       }
-      return `<div class="form-group" style="margin-bottom:14px;">
-        <label style="display:inline-block;min-width:90px;">${esc(it.prompt)}</label>
+      return `<div class="form-group q-card" style="margin-bottom:14px;">
+        <div class="q-row"><span class="q-stem">${esc(it.prompt)}</span></div>
         <input type="text" id="dict_${i}" value="${esc(it.input||'')}" ${it.checked?'disabled':''}
           oninput="S.chinese.dictation.items[${i}].input=this.value;save();"
           onkeydown="if(event.key==='Enter')checkDictation()"
-          placeholder="写汉字" style="width:160px;display:inline-block;margin-left:8px;">
+          placeholder="写汉字" style="width:160px;display:inline-block;">
         ${it.checked?rightMsg:''}
       </div>`;
     }
@@ -4041,9 +4105,8 @@ function genChinesePractice(path) {
         ${allChecked?`<div class="quiz-result" style="color:${correct===d.length?'var(--green)':'var(--orange)'};margin-bottom:12px;">听写正确 ${correct}/${d.length} ${correct===d.length?'🎉 全对！+8 积分':''}</div>`:''}
         <div class="quiz-list">
           ${d.map((w,i)=>`
-            <div class="form-group" style="margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-              <button class="sound-btn" onclick="speak('${w.en.replace(/'/g,"\\'")}','en-US')">🔊</button>
-              <span style="min-width:70px;color:var(--text-secondary);font-size:14px;">${esc(w.cn)}</span>
+            <div class="form-group q-card" style="margin-bottom:14px;">
+              <div class="q-row"><span class="q-num" style="background:var(--purple, #c084fc);">${i+1}</span><span class="q-stem" style="color:var(--purple-deep,#7a63d6);">${esc(w.cn)}</span><button class="btn btn-mini" onclick="event.stopPropagation();speak('${w.en.replace(/'/g,"\\'")}','en-US')" style="margin-left:auto;">🔊</button></div>
               <input type="text" id="edict_${i}" value="${esc(w.input||'')}" ${w.checked?'disabled':''}
                 oninput="S.english.dictation[${i}].input=this.value;save();"
                 onkeydown="if(event.key==='Enter')checkEnglishDictation()"
@@ -4374,15 +4437,16 @@ function genEnglishQuiz(words) {
       const allChecked = S.english.quiz.every(q => q.checked);
       const correct = S.english.quiz.filter(q => q.selected === q.ans).length;
       const eqLabel = (q, i) => {
+        const num = `<span class="q-num">${i+1}</span>`;
         switch (q.type) {
-          case 'listen': return `${i+1}. 🔊 <button class="btn btn-mini" onclick="playQuizAudio(${i})">▶ 播放</button> 听到的单词是？`;
-          case 'en2cn': return `${i+1}. 词汇（英译中）：「${q.q}」的中文意思是？`;
-          case 'cn2en': return `${i+1}. 词汇（中译英）：「${q.q}」的英文是？`;
-          case 'grammar': return `${i+1}. 语法选择：${q.q}`;
-          case 'scene': return `${i+1}. 情景交际：${q.q}`;
-          case 'trans': return `${i+1}. 句型转换：${q.q}`;
-          case 'read': return `${i+1}. 阅读理解：${q.q}`;
-          default: return `${i+1}. ${q.q}`;
+          case 'listen': return `${num}<span class="q-stem">🔊 <button class="btn btn-mini" onclick="playQuizAudio(${i})">▶ 播放</button> 听到的单词是？</span>`;
+          case 'en2cn': return `${num}<span class="q-stem">词汇（英译中）：「${q.q}」的中文意思是？</span>`;
+          case 'cn2en': return `${num}<span class="q-stem">词汇（中译英）：「${q.q}」的英文是？</span>`;
+          case 'grammar': return `${num}<span class="q-stem">语法选择：${q.q}</span>`;
+          case 'scene': return `${num}<span class="q-stem">情景交际：${q.q}</span>`;
+          case 'trans': return `${num}<span class="q-stem">句型转换：${q.q}</span>`;
+          case 'read': return `${num}<span class="q-stem">阅读理解：${q.q}</span>`;
+          default: return `${num}<span class="q-stem">${q.q}</span>`;
         }
       };
       return `
@@ -4391,9 +4455,9 @@ function genEnglishQuiz(words) {
         </div>
         <div class="quiz-list">
           ${S.english.quiz.map((q,i)=>`
-            <div class="form-group" style="margin-bottom:16px;">
+            <div class="form-group q-card" style="margin-bottom:16px;">
               ${q.type==='read' && q.passage ? `<div style="background:#f4f6fb; border-left:4px solid var(--purple,#7c4dff); padding:10px 12px; border-radius:8px; margin-bottom:8px; font-size:14px; line-height:1.7; color:var(--text,#222);">${q.passage}</div>` : ''}
-              ${q.type==='read' ? `<label style="font-weight:700;color:var(--purple,#7c4dff)">${eqLabel(q,i)}</label>` : `<label>${eqLabel(q,i)}</label>`}
+              <div class="q-row">${eqLabel(q,i)}</div>
               <div class="quiz-options">
                 ${q.options.map((opt, oi)=>`
                   <input type="radio" name="eq_${i}" id="eq_${i}_${oi}" value="${oi}" onchange="selectQuiz(${i},${oi})" style="position:absolute;opacity:0;width:0;height:0;">
@@ -4950,10 +5014,10 @@ function mathQuizHTML() {
   return S.math.quiz.map((item,i)=>{
     if (item.type === 'choice' || item.type === 'judge') {
       const opts = item.type === 'judge' ? ['对','错'] : item.options;
-      return `<div class="form-group"><label>${i+1}. ${esc(item.q)}</label><div class="quiz-options">${opts.map((opt,oi)=>`<input type="radio" name="mq_${i}" id="mq_${i}_${oi}" value="${oi}" onchange="selectMathChoice(${i},${oi})" style="position:absolute;opacity:0;width:0;height:0;" ${item.checked?'disabled':''}><label for="mq_${i}_${oi}" class="quiz-option ${item.checked?(opt===String(item.ans)?'correct':(item.sel===oi?'wrong':'')):(item.sel===oi?'selected':'')}" id="mql_${i}_${oi}">${esc(opt)}</label>`).join('')}</div></div>`;
+      return `<div class="form-group q-card"><div class="q-row"><span class="q-num">${i+1}</span><span class="q-stem">${esc(item.q)}</span></div><div class="quiz-options">${opts.map((opt,oi)=>`<input type="radio" name="mq_${i}" id="mq_${i}_${oi}" value="${oi}" onchange="selectMathChoice(${i},${oi})" style="position:absolute;opacity:0;width:0;height:0;" ${item.checked?'disabled':''}><label for="mq_${i}_${oi}" class="quiz-option ${item.checked?(opt===String(item.ans)?'correct':(item.sel===oi?'wrong':'')):(item.sel===oi?'selected':'')}" id="mql_${i}_${oi}">${esc(opt)}</label>`).join('')}</div></div>`;
     }
     const val = item.sel === -1 ? '' : String(item.sel || '');
-    return `<div class="form-group"><label>${i+1}. ${esc(item.q)}</label><input type="text" id="qa${i}" data-ans="${esc(String(item.ans))}" value="${esc(val)}" placeholder="填答案" ${item.checked?'disabled':''} oninput="S.math.quiz[${i}].sel=this.value;save();" onkeydown="if(event.key==='Enter')checkQuiz()">${item.checked?`<span style="margin-left:8px;font-weight:700;color:${String(item.sel).trim()===String(item.ans)?'var(--green)':'var(--red)'}">${String(item.sel).trim()===String(item.ans)?'✅':'❌ 正确答案：'+esc(item.ans)}</span>`:''}</div>`;
+    return `<div class="form-group q-card"><div class="q-row"><span class="q-num">${i+1}</span><span class="q-stem">${esc(item.q)}</span></div><input type="text" id="qa${i}" data-ans="${esc(String(item.ans))}" value="${esc(val)}" placeholder="填答案" ${item.checked?'disabled':''} oninput="S.math.quiz[${i}].sel=this.value;save();" onkeydown="if(event.key==='Enter')checkQuiz()">${item.checked?`<span style="margin-left:8px;font-weight:700;color:${String(item.sel).trim()===String(item.ans)?'var(--green)':'var(--red)'}">${String(item.sel).trim()===String(item.ans)?'✅':'❌ 正确答案：'+esc(item.ans)}</span>`:''}</div>`;
   }).join('');
 }
 
@@ -5162,7 +5226,7 @@ function selectMathChoice(i, oi) {
     function olympiadHTML() {
       if (!S.math.olympiad) genOlympiad();
       return `
-        <div class="form-group"><label>${S.math.olympiad.q}</label><input type="text" id="olympiadAns" data-ans="${esc(S.math.olympiad.ans)}" placeholder="把你的思路和答案写在这里" onkeydown="if(event.key==='Enter')checkOlympiad()"></div>
+        <div class="form-group q-card"><div class="q-row"><span class="q-stem">${S.math.olympiad.q}</span></div><input type="text" id="olympiadAns" data-ans="${esc(S.math.olympiad.ans)}" placeholder="把你的思路和答案写在这里" onkeydown="if(event.key==='Enter')checkOlympiad()"></div>
       `;
     }
     function newOlympiad() { genOlympiad(); save(); render(); }
