@@ -2,7 +2,7 @@
  * 作用：首次访问后把站点资源缓存到本地，之后断网/弱网也能打开（PWA 离线）。
  * 更新：修改资源后，把下方 CACHE 版本号 +1（如 v1 -> v2），新版本会自动覆盖旧缓存。
  */
-const CACHE = 'syx-pwa-v14';
+const CACHE = 'syx-pwa-v15';
 const ASSETS = [
   './',
   './index.html',

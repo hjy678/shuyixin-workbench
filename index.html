@@ -89,16 +89,21 @@
     /* ---- 顶栏清爽定稿款（单行 · 渐变背景 · 圆光晕🐱 · chip · 棱镜光带） ---- */
     .topbar {
       position: relative;
-      display: flex; align-items: center; gap: 14px;
+      display: flex; flex-direction: column; align-items: stretch; gap: 4px;
       background: var(--topbar-bg);
       border-radius: 26px;
-      padding: 14px 18px;
+      padding: 12px 18px 14px;
       color: var(--topbar-text);
       border: 1.5px solid rgba(165,148,240,.22);
       box-shadow: var(--shadow);
       overflow: hidden;
       width: 100%;
       margin-bottom: 10px;
+    }
+    /* 顶栏第一行：菜单 + mascot + 标题 + chip（清爽定稿款双行结构） */
+    .topbar-row {
+      display: flex; align-items: center; gap: 14px;
+      width: 100%;
     }
     /* 棱镜光带：顶部白色光晕 + 垂直光束向下散射 */
     .topbar::before {
@@ -149,12 +154,12 @@
       90%  { transform: translateY(1px) scale(1.01); }
       100% { opacity: 1; transform: translateY(0) scale(1); }
     }
-    /* 顶栏下方副标题行（清爽定稿款，独立元素） */
+    /* 顶栏副标题（清爽定稿款：作为顶栏内嵌第二行，与 mascot 左边缘对齐） */
     .topbar-subline {
-      margin: 0 0 14px 6px;
+      margin: 0;
       font-size: 12.5px; color: #8a7a92; font-weight: normal;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      padding-left: 50px;     /* 与 mascot(64px+gap14px-28px)对齐 */
+      padding-left: 50px;     /* 顶栏 pad-left 18 + 此处 50 ≈ mascot 左边缘（72），形成"小标题"对齐 */
     }
     .topbar-subline b { color: var(--cherry-deep); font-weight: bold; }
     /* 圆形粉色光晕 mascot（🐱 emoji）—— 清爽定稿款 64px */
@@ -834,17 +839,19 @@
   
   <div class="wrap">
     <header class="topbar">
-      <button class="menu-btn" onclick="toggleMenu()" aria-label="菜单">
-        <span></span><span></span><span></span>
-      </button>
-      <div class="mascot" aria-label="欣欣"></div>
-      <h1 class="topbar-title">舒艺欣学习工作台</h1>
-      <div class="top-stats">
-        <button class="chip stars" onclick="setPage('reward')" title="奖励">⭐ 0</button>
-        <button class="chip streak" onclick="setPage('reward')" title="连续打卡">🔥 0</button>
+      <div class="topbar-row">
+        <button class="menu-btn" onclick="toggleMenu()" aria-label="菜单">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="mascot" aria-label="欣欣"></div>
+        <h1 class="topbar-title">舒艺欣学习工作台</h1>
+        <div class="top-stats">
+          <button class="chip stars" onclick="setPage('reward')" title="奖励">⭐ 0</button>
+          <button class="chip streak" onclick="setPage('reward')" title="连续打卡">🔥 0</button>
+        </div>
       </div>
+      <p class="topbar-subline">小学三年级 · <b>人教版</b> ｜ <b>快乐学习</b> · 越学越聪明</p>
     </header>
-    <p class="topbar-subline">小学三年级 · <b>人教版</b> ｜ <b>快乐学习</b> · 越学越聪明</p>
 
     <div class="drawer-overlay" id="overlay" onclick="toggleMenu()"></div>
     <aside class="drawer" id="drawer">
@@ -878,7 +885,7 @@
     ];
 
     const STORAGE_KEY = 'syx-g3-workbench-v1';
-    const APP_VERSION = '2026-08-21-same-width2'; // 根因修复：<div class="card greet"> 去掉 .card 层，消除 22px×2 padding 挤压，问候卡与顶栏等宽
+    const APP_VERSION = '2026-08-21-subline-inline'; // 副标题移回顶栏内部，作为清爽定稿款双行结构的第二行
 
     /* 全局错误可视化：任何未捕获的报错都会显示在页面顶部红条，便于排查 */
     function showErr(msg) {
