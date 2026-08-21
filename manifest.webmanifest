@@ -1,0 +1,17 @@
+{
+  "name": "舒艺欣学习工作台",
+  "short_name": "舒艺欣",
+  "description": "小学三年级 · 人教版PEP 学习工作台：语文、数学、英语趣味练习与学习进度管理。",
+  "lang": "zh-CN",
+  "start_url": "index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#e81f80",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
