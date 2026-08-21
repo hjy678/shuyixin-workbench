@@ -89,16 +89,16 @@
     /* ---- 顶栏清爽定稿款（单行 · 渐变背景 · 圆光晕🐱 · chip · 棱镜光带） ---- */
     .topbar {
       position: relative;
-      display: flex; flex-direction: column; align-items: stretch; gap: 4px;
+      display: flex; flex-direction: column; align-items: stretch; gap: 6px;
       background: var(--topbar-bg);
-      border-radius: 26px;
-      padding: 12px 18px 14px;
+      border-radius: 28px;
+      padding: 18px 22px 16px;
       color: var(--topbar-text);
       border: 1.5px solid rgba(165,148,240,.22);
       box-shadow: var(--shadow);
       overflow: hidden;
       width: 100%;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
     /* 顶栏第一行：菜单 + mascot + 标题 + chip（清爽定稿款双行结构） */
     .topbar-row {
@@ -140,7 +140,7 @@
     }
     .topbar-title {
       flex: 1; min-width: 0; margin: 0;
-      font-size: 27px; letter-spacing: .5px; font-weight: bold;
+      font-size: 32px; letter-spacing: .5px; font-weight: bold;
       background: linear-gradient(135deg, #e81f80 0%, #7b78ef 100%);
       -webkit-background-clip: text; background-clip: text;
       -webkit-text-fill-color: transparent; color: transparent;
@@ -157,31 +157,31 @@
     /* 顶栏副标题（清爽定稿款：作为顶栏内嵌第二行，与 mascot 左边缘对齐） */
     .topbar-subline {
       margin: 0;
-      font-size: 12.5px; color: #8a7a92; font-weight: normal;
+      font-size: 14px; color: #8a7a92; font-weight: normal;
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      padding-left: 50px;     /* 顶栏 pad-left 18 + 此处 50 ≈ mascot 左边缘（72），形成"小标题"对齐 */
+      padding-left: 56px;     /* 顶栏 pad-left 22 + 此处 56 ≈ mascot 左边缘（92） */
     }
     .topbar-subline b { color: var(--cherry-deep); font-weight: bold; }
-    /* 圆形粉色光晕 mascot（🐱 emoji）—— 清爽定稿款 64px */
+    /* 圆形粉色光晕 mascot（🐱 emoji）—— 清爽定稿款 80px（与问候卡 46px 猫/26px padding 视觉平衡） */
     .topbar .mascot {
       position: relative; flex: none;
-      width: 64px; height: 64px; border-radius: 50%;
+      width: 80px; height: 80px; border-radius: 50%;
       background:
         radial-gradient(circle at 50% 50%, #fff5fa 0%, #ffd6e9 28%, #ffc4dd 55%, rgba(255,196,221,0) 78%),
         radial-gradient(circle at 32% 28%, #ffffff 0%, #ffe4f0 60%, rgba(255,228,240,0) 100%);
       display: flex; align-items: center; justify-content: center;
       font-size: 0;
       box-shadow:
-        0 0 28px rgba(255,126,179,.55),
-        0 0 12px rgba(255,196,221,.85),
-        0 6px 14px rgba(217,107,145,.35),
-        inset 0 4px 10px rgba(255,255,255,.9),
-        inset 0 -8px 16px rgba(217,107,145,.25);
+        0 0 32px rgba(255,126,179,.55),
+        0 0 14px rgba(255,196,221,.85),
+        0 8px 18px rgba(217,107,145,.35),
+        inset 0 4px 12px rgba(255,255,255,.9),
+        inset 0 -8px 18px rgba(217,107,145,.25);
       animation: topbarCatBreathe 3.2s ease-in-out infinite;
     }
     .topbar .mascot::before {
       content: "🐱";
-      position: relative; z-index: 2; font-size: 30px; line-height: 1;
+      position: relative; z-index: 2; font-size: 38px; line-height: 1;
       filter: drop-shadow(0 2px 3px rgba(217,107,145,.55));
     }
     @keyframes topbarCatBreathe {
@@ -214,15 +214,15 @@
     }
     /* hamburger 三横线（清爽定稿款，菜单打开时不切 X） */
     .menu-btn {
-      width: 40px; height: 40px; border-radius: 13px; flex: none;
+      width: 48px; height: 48px; border-radius: 14px; flex: none;
       background: linear-gradient(135deg, #fff, #f7f1ff);
       border: 1px solid rgba(165,148,240,.25);
       display: flex; flex-direction: column; align-items: center; justify-content: center;
-      gap: 4px; cursor: pointer; transition: .2s; padding: 0; color: inherit;
+      gap: 5px; cursor: pointer; transition: .2s; padding: 0; color: inherit;
     }
     .menu-btn:hover { transform: scale(1.05); box-shadow: 0 4px 12px rgba(165,148,240,.3); }
     .menu-btn span {
-      display: block; width: 18px; height: 2.5px;
+      display: block; width: 22px; height: 3px;
       background: linear-gradient(90deg, var(--lav), var(--cherry));
       border-radius: 3px; transition: .25s;
     }
@@ -310,7 +310,7 @@
     .hero-errorbook .hero-bg { background:linear-gradient(135deg,#ff6b8a 0%,#ffb085 100%); }
 
     /* Content area */
-    .content { padding:24px 0; max-width:none; margin:0 auto; }
+    .content { padding:10px 0 16px; max-width:none; margin:0 auto; }
     .section-title {
       display:flex; align-items:center; gap:10px; font-size:19px; font-weight:700; margin:0 0 16px 0;
       color:var(--text);
@@ -684,7 +684,7 @@
       .hero-home { height:190px; padding:18px 22px 18px; }
       .hero h1 { font-size:26px; }
       .hero-home h1 { font-size:30px; }
-      .content { padding:16px 0; }
+      .content { padding:8px 0 12px; }
       .grid-2, .grid-3, .grid-4 { grid-template-columns:1fr; }
       .vocab-grid { grid-template-columns:repeat(2,1fr); }
       .medal-grid, .reward-grid { grid-template-columns:repeat(2,1fr); }
@@ -694,7 +694,7 @@
       .lesson-bar select { flex:1; min-width:90px; }
     }
     @media (max-width: 600px) {
-      .content { padding:12px 0; }
+      .content { padding:8px 0 10px; }
       .hero { height:auto; min-height:120px; padding:14px 16px; }
       .hero h1 { font-size:22px; }
       .hero-home h1 { font-size:26px; }
@@ -885,7 +885,7 @@
     ];
 
     const STORAGE_KEY = 'syx-g3-workbench-v1';
-    const APP_VERSION = '2026-08-21-subline-inline'; // 副标题移回顶栏内部，作为清爽定稿款双行结构的第二行
+    const APP_VERSION = '2026-08-21-topbar-bigger'; // 顶栏放大：mascot 64→80、menu 40→48、title 27→32、padding 12/18/14→18/22/16；content padding 24→10 让两卡更紧贴
 
     /* 全局错误可视化：任何未捕获的报错都会显示在页面顶部红条，便于排查 */
     function showErr(msg) {
