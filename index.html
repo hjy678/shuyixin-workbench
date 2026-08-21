@@ -896,6 +896,23 @@
     .home-mod p { margin:0; font-size:12px; color:#9b8fc7; line-height:1.4; min-height:32px; }
     .home-bar { height:10px; border-radius:8px; background:#ece6fb; overflow:hidden; margin:6px 0 2px; }
     .home-bar > i { display:block; height:100%; background:linear-gradient(90deg,#e81f80,#7b78ef); }
+
+    /* 今日学习中心卡片（只有 3 张主学科，更紧凑、信息更密） */
+    .home-grid-action { grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px; margin-top:10px; }
+    .home-mod-action { padding:16px 16px 12px; cursor:pointer; }
+    .home-mod-head { display:flex; align-items:flex-start; gap:10px; }
+    .home-mod-head .ic { font-size:34px; line-height:1; }
+    .home-mod-title { flex:1; min-width:0; }
+    .home-mod-title h3 { margin:0 0 2px; font-size:18px; color:#5e2b6b; font-weight:700; }
+    .home-mod-title p { margin:0; font-size:12px; color:#9b8fc7; min-height:0; }
+    .err-badge { font-size:12px; font-weight:700; color:#fff; background:linear-gradient(135deg,#ef4444,#f97316); border-radius:999px; padding:3px 10px; white-space:nowrap; box-shadow:0 2px 8px rgba(239,68,68,.30); }
+    .home-info { margin-top:10px; padding-top:10px; border-top:1px dashed rgba(165,148,240,.30); }
+    .home-info-row { display:flex; justify-content:space-between; align-items:center; font-size:13px; color:var(--text-secondary); margin-bottom:4px; }
+    .home-info-row b { color:#5e2b6b; font-weight:700; }
+    .home-info-row.last { margin-top:6px; margin-bottom:0; }
+    .home-info-row.last .home-info-tip { max-width:62%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#7b78ef; font-weight:600; }
+    .home-mod-go { display:block; width:100%; margin-top:12px; padding:10px 0; border:none; border-radius:14px; cursor:pointer; background:linear-gradient(135deg,#e81f80,#7b78ef); color:#fff; font-size:14px; font-weight:700; letter-spacing:1px; box-shadow:0 4px 12px rgba(123,120,239,.30); transition:.2s; }
+    .home-mod-go:hover { transform:translateY(-1px); box-shadow:0 6px 18px rgba(123,120,239,.45); }
   </style>
 </head>
 <body>
@@ -3443,17 +3460,45 @@ function genChinesePractice(path) {
           </div>
 
           <div class="card">
-            <h3 style="margin:0 0 4px;color:var(--text);">🎯 学科入口</h3>
-            <div class="home-grid">
-              ${homeSubs.map(s=>`
-                <div class="home-mod" onclick="setPage('${s.id}')">
-                  <span class="ic">${s.icon}</span>
-                  <h3>${s.name}</h3>
-                  <p>${subDesc[s.id]||'点击开始学习'}</p>
-                  <div class="home-bar"><i style="width:${S.progress[s.id]||0}%"></i></div>
-                </div>
-              `).join('')}
+            <h3 style="margin:0 0 4px;color:var(--text);">🎯 今日学习中心</h3>
+            <p style="margin:0 0 12px;font-size:13px;color:var(--text-secondary);">三大主学科冲刺卡片——含实时进度、错题数、上次学到位置，点「立即练习」直达。</p>
+            <div class="home-grid home-grid-action">
+              ${['chinese','math','english'].map(id=>{
+                const sub = subjects.find(s=>s.id===id);
+                const errCount = (S.errorbook||[]).filter(e=>e.subject===id && !e.mastered).length;
+                const pct = S.progress[id]||0;
+                const tip = subDesc[id]||'';
+                let lastPos = '';
+                try {
+                  const sel = S.selectedLesson && S.selectedLesson[id];
+                  if (sel && curriculum[id] && curriculum[id].semesters[sel.semester]) {
+                    const sem = curriculum[id].semesters[sel.semester];
+                    const unit = sem.units[sel.unit] || sem.units[0];
+                    const lesson = (unit.lessons && unit.lessons[sel.lesson]) || (unit.lessons && unit.lessons[0]) || '';
+                    lastPos = sem.name.replace('册','') + ' · ' + unit.name + (lesson?(' · ' + lesson.split(' ')[0]):'');
+                  }
+                } catch(e) { lastPos = ''; }
+                return `
+                  <div class="home-mod home-mod-action" onclick="setPage('${id}')">
+                    <div class="home-mod-head">
+                      <span class="ic">${sub.icon}</span>
+                      <div class="home-mod-title">
+                        <h3>${sub.name}</h3>
+                        <p>${tip}</p>
+                      </div>
+                      ${errCount>0?`<span class="err-badge">${errCount} 错题</span>`:''}
+                    </div>
+                    <div class="home-info">
+                      <div class="home-info-row"><span>当前进度</span><b>${pct}%</b></div>
+                      <div class="home-bar"><i style="width:${pct}%"></i></div>
+                      ${lastPos?`<div class="home-info-row last"><span>上次学到</span><span class="home-info-tip">${esc(lastPos)}</span></div>`:''}
+                    </div>
+                    <button class="home-mod-go" onclick="event.stopPropagation();setPage('${id}')">立即练习 →</button>
+                  </div>
+                `;
+              }).join('')}
             </div>
+            <p style="margin:14px 0 0;font-size:12px;color:var(--text-secondary);">其他学科（体育 / 科学 / 劳动 / 阅读 / 思辨 / 期末冲刺 等）请从<a href="#" onclick="event.preventDefault();document.getElementById('drawer').classList.toggle('open');document.getElementById('drawer-overlay')?.classList.toggle('open');" style="color:var(--purple);font-weight:600;">左侧菜单</a>进入。</p>
           </div>
 
         </div>
