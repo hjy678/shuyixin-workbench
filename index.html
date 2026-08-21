@@ -885,7 +885,7 @@
     ];
 
     const STORAGE_KEY = 'syx-g3-workbench-v1';
-    const APP_VERSION = '2026-08-21-topbar-bigger'; // 顶栏放大：mascot 64→80、menu 40→48、title 27→32、padding 12/18/14→18/22/16；content padding 24→10 让两卡更紧贴
+    const APP_VERSION = '2026-08-21-quiz-overhaul'; // 题库全面整改：数学144生成器(8题/单元题型多样)、英语125题、语文209题(13类)，题型去重，消除重复
 
     /* 全局错误可视化：任何未捕获的报错都会显示在页面顶部红条，便于排查 */
     function showErr(msg) {
@@ -1091,7 +1091,243 @@
     }
 
     // 生成语文“基础闯关”练习：古诗题 + 字词题，混合多种题型，避免单一
-const CHINESE_EXAM = {"near":[{"w":"美丽","n":"漂亮","wrong":["难看","丑陋"]},{"w":"快乐","n":"高兴","wrong":["难过","伤心"]},{"w":"仔细","n":"认真","wrong":["马虎","粗心"]},{"w":"温暖","n":"暖和","wrong":["寒冷","冰凉"]},{"w":"忽然","n":"突然","wrong":["慢慢","渐渐"]},{"w":"喜爱","n":"喜欢","wrong":["讨厌","厌恶"]},{"w":"着急","n":"焦急","wrong":["冷静","从容"]},{"w":"办法","n":"方法","wrong":["问题","困难"]},{"w":"安静","n":"宁静","wrong":["喧闹","吵闹"]},{"w":"洁净","n":"干净","wrong":["肮脏","污浊"]}],"far":[{"w":"高","f":"矮","wrong":["大","长"]},{"w":"胖","f":"瘦","wrong":["重","大"]},{"w":"快乐","f":"悲伤","wrong":["开心","高兴"]},{"w":"深","f":"浅","wrong":["清","蓝"]},{"w":"寒冷","f":"温暖","wrong":["凉快","冰冷"]},{"w":"保护","f":"破坏","wrong":["爱护","守护"]},{"w":"白天","f":"黑夜","wrong":["清晨","傍晚"]},{"w":"柔软","f":"坚硬","wrong":["光滑","轻柔"]},{"w":"粗心","f":"细心","wrong":["大意","马虎"]},{"w":"新","f":"旧","wrong":["好","美"]}],"zuci":[{"a":"己","b":"已","correct":"自己 / 已经","wrong":["已自 / 己经","自已 / 己经","已己 / 自已"]},{"a":"人","b":"入","correct":"人们 / 入口","wrong":["入们 / 人口","人们 / 人入","入人 / 口人"]},{"a":"午","b":"牛","correct":"中午 / 水牛","wrong":["牛午 / 水中","中牛 / 午水","午牛 / 牛中"]},{"a":"力","b":"刀","correct":"力气 / 小刀","wrong":["刀气 / 力小","力小 / 刀气","刀力 / 小力"]},{"a":"木","b":"本","correct":"木头 / 书本","wrong":["本头 / 木书","木本 / 书木","本木 / 头书"]},{"a":"禾","b":"和","correct":"禾苗 / 和好","wrong":["和苗 / 禾好","禾好 / 和苗","和禾 / 苗好"]},{"a":"目","b":"日","correct":"目光 / 日子","wrong":["日光 / 目子","目光 / 目子","日目 / 子日"]},{"a":"十","b":"什","correct":"十个 / 什么","wrong":["什个 / 十么","十个 / 十么","什十 / 个么"]}],"pei":[{"a":"爱护","b":"花草","wrong":["伤害","破坏","采摘"]},{"a":"热爱","b":"祖国","wrong":["讨厌","离开","忘记"]},{"a":"养成","b":"习惯","wrong":["失去","破坏","丢掉"]},{"a":"参加","b":"活动","wrong":["退出","拒绝","停止"]},{"a":"打扫","b":"卫生","wrong":["弄脏","破坏","丢掉"]},{"a":"朗读","b":"课文","wrong":["默写","背诵","抄写"]}],"bug":[{"good":"公园里的花开得很美丽。","wrong":["公园里的花开得很。","公园里的花很美丽开了。"]},{"good":"我们要认真完成作业。","wrong":["我们要认真完成。","我们要完成作业认真。"]},{"good":"小鸟在树上快乐地唱歌。","wrong":["小鸟在树上快乐地。","小鸟在唱歌树上快乐地。"]},{"good":"我喜欢这本有趣的故事书。","wrong":["我喜欢这本有趣。","这本故事书我喜欢有趣。"]},{"good":"妈妈做了一道好吃的菜。","wrong":["妈妈做了一道好吃。","好吃的菜妈妈做了一道。"]}],"trans":[{"orig":"小明把窗户擦干净了。","trans":"窗户被小明擦干净了。","wrong":["小明被窗户擦干净了。","窗户把小明擦干净了。"]},{"orig":"我们把教室打扫干净了。","trans":"教室被我们打扫干净了。","wrong":["我们被教室打扫干净了。","教室把我们打扫干净了。"]},{"orig":"春风把小草吹绿了。","trans":"小草被春风吹绿了。","wrong":["春风被小草吹绿了。","小草把春风吹绿了。"]},{"orig":"农民伯伯把地翻好了。","trans":"地被农民伯伯翻好了。","wrong":["农民伯伯被地翻好了。","地把农民伯伯翻好了。"]}],"rhet":[{"sent":"花儿在风中点头微笑。","ans":"拟人","wrong":["比喻","夸张","排比"]},{"sent":"他的脸红得像个大苹果。","ans":"比喻","wrong":["拟人","夸张","排比"]},{"sent":"教室里静得连一根针掉在地上都能听见。","ans":"夸张","wrong":["比喻","拟人","排比"]},{"sent":"天上的云有的像棉花糖，有的像小白兔，有的像小绵羊。","ans":"排比","wrong":["比喻","拟人","夸张"]},{"sent":"难道我们不应该爱护环境吗？","ans":"反问","wrong":["设问","疑问","比喻"]}],"accum":[{"q":"“________________，霜叶红于二月花。”横线处应填（　　）。","ans":"停车坐爱枫林晚","wrong":["远上寒山石径斜","白云生处有人家","夜半钟声到客船"]},{"q":"“一年好景君须记，________________。”横线处应填（　　）。","ans":"最是橙黄橘绿时","wrong":["荷尽已无擎雨盖","菊残犹有傲霜枝","霜叶红于二月花"]},{"q":"“天门中断楚江开，________________。”横线处应填（　　）。","ans":"碧水东流至此回","wrong":["两岸青山相对出","孤帆一片日边来","遥看瀑布挂前川"]},{"q":"“________________，淡妆浓抹总相宜。”横线处应填（　　）。","ans":"欲把西湖比西子","wrong":["水光潋滟晴方好","山色空蒙雨亦奇","两岸猿声啼不住"]}],"idiom":[{"q":"比喻不主动努力，而存侥幸心理，希望得到意外收获的成语是（　　）。","ans":"守株待兔","wrong":["画蛇添足","亡羊补牢","掩耳盗铃"]},{"q":"比喻做了多余的事，反而把事情弄糟的成语是（　　）。","ans":"画蛇添足","wrong":["守株待兔","亡羊补牢","刻舟求剑"]},{"q":"比喻出了问题以后想办法补救，免得再受损失的成语是（　　）。","ans":"亡羊补牢","wrong":["掩耳盗铃","守株待兔","画蛇添足"]},{"q":"比喻自己欺骗自己的成语是（　　）。","ans":"掩耳盗铃","wrong":["刻舟求剑","守株待兔","亡羊补牢"]},{"q":"形容读书多、学问大的成语是（　　）。","ans":"学富五车","wrong":["目不识丁","胸无点墨","不学无术"]}],"relate":[{"q":"（　　）天气很冷，（　　）他仍然坚持上学。","ans":"虽然……但是……","wrong":["因为……所以……","不但……而且……","如果……就……"]},{"q":"（　　）明天下雨，运动会（　　）延期。","ans":"如果……就……","wrong":["虽然……但是……","因为……所以……","不但……而且……"]},{"q":"他（　　）学习认真，（　　）成绩很好。","ans":"因为……所以……","wrong":["虽然……但是……","如果……就……","不但……而且……"]},{"q":"这本书（　　）内容精彩，（　　）插图也很漂亮。","ans":"不但……而且……","wrong":["因为……所以……","虽然……但是……","如果……就……"]}],"punct":[{"q":"下列句子标点使用正确的一项是（　　）。","ans":"“加油！”他大声喊道。","wrong":["“加油”！他大声喊道。","“加油！他大声喊道。”","“加油”！他大声喊道。"]},{"q":"下列句子标点使用正确的一项是（　　）。","ans":"花园里有许多花：牡丹、月季、菊花。","wrong":["花园里有许多花，牡丹、月季、菊花。","花园里有许多花：牡丹，月季，菊花。","花园里有许多花：牡丹、月季、菊花、。"]},{"q":"下列句子标点使用正确的一项是（　　）。","ans":"你明天去公园吗？","wrong":["你明天去公园。","你明天去公园！","你明天去公园，"]}],"lit":[{"q":"《静夜思》的作者是（　　）。","ans":"李白","wrong":["杜甫","白居易","王维"]},{"q":"《春晓》的作者是（　　）。","ans":"孟浩然","wrong":["李白","杜甫","王维"]},{"q":"《咏鹅》的作者是（　　）。","ans":"骆宾王","wrong":["李白","孟浩然","白居易"]},{"q":"“谁知盘中餐，粒粒皆辛苦”出自（　　）。","ans":"《悯农》","wrong":["《静夜思","《春晓》","《咏鹅》"]}],"classic":[{"q":"“学而时习之，不亦说乎”出自（　　）。","ans":"《论语》","wrong":["《孟子》","《大学》","《中庸》"]},{"q":"“三人行，必有我师焉”告诉我们（　　）。","ans":"要虚心向别人学习","wrong":["三个人一起走","老师一定在前面","只有三个人才能学习"]},{"q":"“温故而知新”中“故”的意思是（　　）。","ans":"旧知识","wrong":["故事","故乡","故意"]}]};
+const CHINESE_EXAM = {
+"near":[
+{"w":"美丽","n":"漂亮","wrong":["难看","丑陋"]},
+{"w":"快乐","n":"高兴","wrong":["难过","伤心"]},
+{"w":"仔细","n":"认真","wrong":["马虎","粗心"]},
+{"w":"温暖","n":"暖和","wrong":["寒冷","冰凉"]},
+{"w":"忽然","n":"突然","wrong":["慢慢","渐渐"]},
+{"w":"喜爱","n":"喜欢","wrong":["讨厌","厌恶"]},
+{"w":"着急","n":"焦急","wrong":["冷静","从容"]},
+{"w":"办法","n":"方法","wrong":["问题","困难"]},
+{"w":"安静","n":"宁静","wrong":["喧闹","吵闹"]},
+{"w":"洁净","n":"干净","wrong":["肮脏","污浊"]},
+{"w":"高兴","n":"开心","wrong":["生气","悲伤"]},
+{"w":"立刻","n":"马上","wrong":["缓慢","渐渐"]},
+{"w":"帮助","n":"帮忙","wrong":["阻碍","破坏"]},
+{"w":"愉快","n":"快乐","wrong":["难过","痛苦"]},
+{"w":"伙伴","n":"朋友","wrong":["敌人","对手"]},
+{"w":"著名","n":"有名","wrong":["无名","普通"]},
+{"w":"非常","n":"十分","wrong":["稍微","略微"]},
+{"w":"故乡","n":"家乡","wrong":["他乡","异地"]},
+{"w":"难过","n":"伤心","wrong":["高兴","快乐"]},
+{"w":"奇怪","n":"奇异","wrong":["平常","普通"]},
+{"w":"盼望","n":"希望","wrong":["失望","绝望"]},
+{"w":"依然","n":"仍然","wrong":["不再","已经"]},
+{"w":"优美","n":"美丽","wrong":["丑陋","难看"]},
+{"w":"宽敞","n":"宽阔","wrong":["狭窄","窄小"]},
+{"w":"讨论","n":"商量","wrong":["独断","沉默"]}
+],
+"far":[
+{"w":"高","f":"矮","wrong":["大","长"]},
+{"w":"胖","f":"瘦","wrong":["重","大"]},
+{"w":"快乐","f":"悲伤","wrong":["开心","高兴"]},
+{"w":"深","f":"浅","wrong":["清","蓝"]},
+{"w":"寒冷","f":"温暖","wrong":["凉快","冰冷"]},
+{"w":"保护","f":"破坏","wrong":["爱护","守护"]},
+{"w":"白天","f":"黑夜","wrong":["清晨","黄昏"]},
+{"w":"光明","f":"黑暗","wrong":["明亮","光亮"]},
+{"w":"宽阔","f":"狭窄","wrong":["广大","辽阔"]},
+{"w":"热闹","f":"冷清","wrong":["喧闹","吵闹"]},
+{"w":"安全","f":"危险","wrong":["平安","安稳"]},
+{"w":"批评","f":"表扬","wrong":["指责","斥责"]},
+{"w":"粗心","f":"细心","wrong":["大意","马虎"]},
+{"w":"胜利","f":"失败","wrong":["成功","获胜"]},
+{"w":"前进","f":"后退","wrong":["进步","前行"]},
+{"w":"谦虚","f":"骄傲","wrong":["虚心","谦逊"]},
+{"w":"勤劳","f":"懒惰","wrong":["勤快","辛勤"]},
+{"w":"真实","f":"虚假","wrong":["实在","确实"]},
+{"w":"喜欢","f":"讨厌","wrong":["喜爱","热爱"]},
+{"w":"开始","f":"结束","wrong":["开头","起初"]},
+{"w":"炎热","f":"寒冷","wrong":["温暖","暖和"]},
+{"w":"黑暗","f":"光明","wrong":["昏暗","暗淡"]},
+{"w":"悲伤","f":"欢乐","wrong":["难过","伤心"]},
+{"w":"轻","f":"重","wrong":["大","小"]},
+{"w":"柔软","f":"坚硬","wrong":["柔和","绵软"]}
+],
+"zuci":[
+{"a":"己","b":"已","correct":"自己 / 已经","wrong":["已自 / 己经","自已 / 己经","已己 / 自已"]},
+{"a":"未","b":"末","correct":"未来 / 末尾","wrong":["末来 / 未尾","未未 / 末末","末未 / 未末"]},
+{"a":"晴","b":"睛","correct":"晴天 / 眼睛","wrong":["睛天 / 晴睛","晴晴 / 睛睛","睛睛 / 晴晴"]},
+{"a":"休","b":"体","correct":"休息 / 体育","wrong":["体息 / 休育","休休 / 体体","体体 / 休休"]},
+{"a":"问","b":"间","correct":"问题 / 中间","wrong":["间题 / 问中","问问 / 间间","间间 / 问问"]},
+{"a":"玩","b":"完","correct":"玩具 / 完成","wrong":["完具 / 玩成","玩玩 / 完完","完完 / 玩玩"]},
+{"a":"李","b":"季","correct":"李子 / 季节","wrong":["季子 / 李节","李李 / 季季","季季 / 李李"]},
+{"a":"外","b":"处","correct":"外面 / 到处","wrong":["处面 / 外到","外外 / 处处","处处 / 外外"]},
+{"a":"喝","b":"渴","correct":"喝水 / 口渴","wrong":["渴水 / 喝口","喝喝 / 渴渴","渴渴 / 喝喝"]},
+{"a":"观","b":"现","correct":"观看 / 现在","wrong":["现看 / 观在","观观 / 现现","现现 / 观观"]},
+{"a":"清","b":"情","correct":"清水 / 心情","wrong":["情水 / 清心","清清 / 情情","情情 / 清清"]},
+{"a":"很","b":"得","correct":"很多 / 得到","wrong":["得多 / 很到","很很 / 得得","得得 / 很很"]},
+{"a":"进","b":"近","correct":"进入 / 远近","wrong":["近入 / 进远","进进 / 近近","近近 / 进进"]},
+{"a":"汽","b":"气","correct":"汽车 / 空气","wrong":["气车 / 汽空","汽汽 / 气气","气气 / 汽汽"]},
+{"a":"士","b":"土","correct":"战士 / 土地","wrong":["土战 / 士地","士士 / 土土","土土 / 士士"]},
+{"a":"在","b":"再","correct":"现在 / 再见","wrong":["再在 / 在见","在在 / 再再","再再 / 在在"]},
+{"a":"低","b":"底","correct":"低头 / 底下","wrong":["底头 / 低下","低低 / 底底","底底 / 低低"]},
+{"a":"乌","b":"鸟","correct":"乌鸦 / 小鸟","wrong":["鸟鸦 / 小乌","乌乌 / 鸟鸟","鸟鸟 / 乌乌"]},
+{"a":"勾","b":"勺","correct":"勾画 / 勺子","wrong":["勺画 / 勾子","勾勾 / 勺勺","勺勺 / 勾勾"]},
+{"a":"浇","b":"烧","correct":"浇水 / 烧火","wrong":["烧水 / 浇火","浇浇 / 烧烧","烧烧 / 浇浇"]}
+],
+"pei":[
+{"a":"爱护","b":"花草","wrong":["伤害","破坏","采摘"]},
+{"a":"晴朗的","b":"天空","wrong":["阴沉的","下雨的","黑暗的"]},
+{"a":"优美的","b":"歌声","wrong":["难听的","吵闹的","刺耳的"]},
+{"a":"认真地","b":"学习","wrong":["马虎地","随便地","慌张地"]},
+{"a":"新鲜的","b":"空气","wrong":["污浊的","陈旧的","闷热的"]},
+{"a":"轻轻地","b":"走路","wrong":["重重地","飞快地","用力地"]},
+{"a":"温暖的","b":"阳光","wrong":["寒冷的","冰冷的","刺骨的"]},
+{"a":"高兴地","b":"笑了","wrong":["难过的","生气的","痛苦的"]},
+{"a":"宽阔的","b":"马路","wrong":["狭窄的","细小的","弯弯的"]},
+{"a":"香甜的","b":"梦","wrong":["苦涩的","可怕的","冰冷的"]},
+{"a":"勇敢地","b":"前进","wrong":["胆怯地","退缩地","害怕地"]},
+{"a":"茂密的","b":"树林","wrong":["稀疏的","光秃的","矮小的"]},
+{"a":"动听的","b":"音乐","wrong":["刺耳的","难听的","嘈杂的"]},
+{"a":"热情地","b":"帮助","wrong":["冷淡地","拒绝地","漠然地"]},
+{"a":"洁白的","b":"云朵","wrong":["乌黑的","灰暗的","脏污的"]},
+{"a":"认真地","b":"写字","wrong":["潦草地","胡乱地","马虎地"]},
+{"a":"快乐的","b":"节日","wrong":["悲伤的","沉闷的","无聊的"]},
+{"a":"明亮的","b":"教室","wrong":["昏暗的","黑暗的","阴沉的"]},
+{"a":"轻轻地","b":"抚摸","wrong":["重重地","粗暴地","用力地"]},
+{"a":"飞快地","b":"奔跑","wrong":["缓慢地","懒散地","悠闲地"]}
+],
+"bug":[
+{"good":"公园里的花开得很美丽。","wrong":["公园里的花开得很。","公园里的花很美丽开了。"]},
+{"good":"他穿了一件红色的衣服。","wrong":["他穿了红色的衣服一件。","他穿了件红衣服的。"]},
+{"good":"小明认真地写作业。","wrong":["小明写认真地作业。","小明作业认真地写。"]},
+{"good":"这本书的内容很有趣。","wrong":["这本书的内容很有乐趣。","这本书的有趣内容很。"]},
+{"good":"同学们在操场上快乐地玩耍。","wrong":["同学们在操场上玩耍得快乐。","同学们玩耍在操场上快乐地。"]},
+{"good":"妈妈买了很多新鲜的水果。","wrong":["妈妈买了新鲜的水果很多。","妈妈买很多了新鲜的水果。"]},
+{"good":"小鸟在树上开心地唱歌。","wrong":["小鸟开心地在树上唱歌的。","小鸟唱歌在树上开心地。"]},
+{"good":"老师认真地批改我们的作业。","wrong":["老师批改认真地我们的作业。","老师我们的作业认真地批改。"]},
+{"good":"春天的公园里开满了五颜六色的花。","wrong":["春天的公园里开满五颜六色的花了。","公园里春天开满了五颜六色的花。"]},
+{"good":"他积极地参加了学校的运动会。","wrong":["他参加积极地了学校的运动会。","他参加了学校积极地运动会。"]},
+{"good":"夜晚的星空美丽极了。","wrong":["星空夜晚的美丽极了。","夜晚的美丽的星空极了。"]},
+{"good":"小朋友们在草地上高兴地放风筝。","wrong":["小朋友们在草地上放风筝高兴地。","小朋友们高兴地放风筝在草地上。"]},
+{"good":"爸爸给我讲了一个有趣的故事。","wrong":["爸爸给我讲了有趣的一个故事。","爸爸讲了给我一个有趣的故事。"]},
+{"good":"雨后的空气格外清新。","wrong":["雨后的空气清新的格外。","清新雨后的空气格外。"]},
+{"good":"小红把教室打扫得干干净净。","wrong":["小红把教室打扫干干净净得。","小红打扫把教室得干干净净。"]}
+],
+"trans":[
+{"orig":"小明把窗户擦干净了。","trans":"窗户被小明擦干净了。","wrong":["小明被窗户擦干净了。","窗户把小明擦干净了。"]},
+{"orig":"风把树叶吹落了。","trans":"树叶被风吹落了。","wrong":["风被树叶吹落了。","树叶把风吹落了。"]},
+{"orig":"我把作业写完了。","trans":"作业被我写完了。","wrong":["我被作业写完了。","作业把我写完了。"]},
+{"orig":"小狗把骨头啃完了。","trans":"骨头被小狗啃完了。","wrong":["小狗被骨头啃完了。","骨头把小狗啃完了。"]},
+{"orig":"妈妈把饭做好了。","trans":"饭被妈妈做好了。","wrong":["妈妈被饭做好了。","饭把妈妈做好了。"]},
+{"orig":"雨水把地面淋湿了。","trans":"地面被雨水淋湿了。","wrong":["雨水被地面淋湿了。","地面把雨水淋湿了。"]},
+{"orig":"他把书借给了我。","trans":"书被他借给了我。","wrong":["他被书借给了我。","书把他借给了我。"]},
+{"orig":"小猫把鱼吃光了。","trans":"鱼被小猫吃光了。","wrong":["小猫被鱼吃光了。","鱼把小猫吃光了。"]},
+{"orig":"工人把大桥修好了。","trans":"大桥被工人修好了。","wrong":["工人被大桥修好了。","大桥把工人修好了。"]},
+{"orig":"我把房间收拾整齐了。","trans":"房间被我收拾整齐了。","wrong":["我被房间收拾整齐了。","房间把我收拾整齐了。"]},
+{"orig":"闪电把夜空照亮了。","trans":"夜空被闪电照亮了。","wrong":["闪电被夜空照亮了。","夜空把闪电照亮了。"]},
+{"orig":"农民把庄稼收完了。","trans":"庄稼被农民收完了。","wrong":["农民被庄稼收完了。","庄稼把农民收完了。"]},
+{"orig":"姐姐把衣服洗好了。","trans":"衣服被姐姐洗好了。","wrong":["姐姐被衣服洗好了。","衣服把姐姐洗好了。"]},
+{"orig":"我把错误改正了。","trans":"错误被我改正了。","wrong":["我被错误改正了。","错误把我改正了。"]},
+{"orig":"大扫除把教室变干净了。","trans":"教室被大扫除变干净了。","wrong":["大扫除被教室变干净了。","教室把大扫除变干净了。"]}
+],
+"rhet":[
+{"sent":"花儿在风中点头微笑。","ans":"拟人","wrong":["比喻","夸张","排比"]},
+{"sent":"燕子的尾巴像一把剪刀。","ans":"比喻","wrong":["拟人","夸张","排比"]},
+{"sent":"飞流直下三千尺。","ans":"夸张","wrong":["比喻","拟人","排比"]},
+{"sent":"教室里静得连一根针掉在地上都能听见。","ans":"夸张","wrong":["比喻","拟人","对偶"]},
+{"sent":"红红的苹果像小灯笼。","ans":"比喻","wrong":["拟人","夸张","排比"]},
+{"sent":"蝴蝶在花丛中跳舞。","ans":"拟人","wrong":["比喻","夸张","排比"]},
+{"sent":"桂花开了，十里飘香。","ans":"夸张","wrong":["比喻","拟人","对偶"]},
+{"sent":"一个个石榴咧开嘴笑了。","ans":"拟人","wrong":["比喻","夸张","排比"]},
+{"sent":"太阳像一个大火球。","ans":"比喻","wrong":["拟人","夸张","排比"]},
+{"sent":"他的声音大得能震破屋顶。","ans":"夸张","wrong":["比喻","拟人","排比"]},
+{"sent":"小草从地下探出头来。","ans":"拟人","wrong":["比喻","夸张","排比"]},
+{"sent":"书是人类进步的阶梯。","ans":"比喻","wrong":["拟人","夸张","排比"]},
+{"sent":"白发三千丈，缘愁似个长。","ans":"夸张","wrong":["比喻","拟人","对偶"]},
+{"sent":"风儿清唱着歌，唤醒了沉睡的大地。","ans":"拟人","wrong":["比喻","夸张","排比"]},
+{"sent":"西湖像一块碧玉。","ans":"比喻","wrong":["拟人","夸张","排比"]}
+],
+"accum":[
+{"q":"“停车坐爱枫林晚，霜叶红于二月花。”横线上一句是（　　）。","ans":"停车坐爱枫林晚","wrong":["远上寒山石径斜","白云生处有人家","夜半钟声到客船"]},
+{"q":"“一年好景君须记，最是橙黄橘绿时。”横线上一句是（　　）。","ans":"最是橙黄橘绿时","wrong":["一年好景君须记","荷尽已无擎雨盖","菊残犹有傲霜枝"]},
+{"q":"“萧萧梧叶送寒声，江上秋风动客情。”横线上一句是（　　）。","ans":"江上秋风动客情","wrong":["萧萧梧叶送寒声","知有儿童挑促织","夜深篱落一灯明"]},
+{"q":"“遥知兄弟登高处，遍插茱萸少一人。”横线上一句是（　　）。","ans":"遍插茱萸少一人","wrong":["遥知兄弟登高处","独在异乡为异客","每逢佳节倍思亲"]},
+{"q":"“路人借问遥招手，怕得鱼惊不应人。”横线上一句是（　　）。","ans":"怕得鱼惊不应人","wrong":["路人借问遥招手","蓬头稚子学垂纶","侧坐莓苔草映身"]},
+{"q":"“欲把西湖比西子，淡妆浓抹总相宜。”横线上一句是（　　）。","ans":"淡妆浓抹总相宜","wrong":["欲把西湖比西子","水光潋滟晴方好","山色空蒙雨亦奇"]},
+{"q":"“两岸猿声啼不住，轻舟已过万重山。”横线上一句是（　　）。","ans":"轻舟已过万重山","wrong":["两岸猿声啼不住","朝辞白帝彩云间","千里江陵一日还"]},
+{"q":"“两个黄鹂鸣翠柳，一行白鹭上青天。”横线上一句是（　　）。","ans":"一行白鹭上青天","wrong":["两个黄鹂鸣翠柳","窗含西岭千秋雪","门泊东吴万里船"]},
+{"q":"“欲穷千里目，更上一层楼。”横线上一句是（　　）。","ans":"更上一层楼","wrong":["白日依山尽","黄河入海流","欲穷千里目"]},
+{"q":"“飞流直下三千尺，疑是银河落九天。”横线上一句是（　　）。","ans":"疑是银河落九天","wrong":["日照香炉生紫烟","遥看瀑布挂前川","飞流直下三千尺"]},
+{"q":"“小荷才露尖尖角，早有蜻蜓立上头。”横线上一句是（　　）。","ans":"早有蜻蜓立上头","wrong":["泉眼无声惜细流","树阴照水爱晴柔","小荷才露尖尖角"]},
+{"q":"“接天莲叶无穷碧，映日荷花别样红。”横线上一句是（　　）。","ans":"映日荷花别样红","wrong":["毕竟西湖六月中","风光不与四时同","接天莲叶无穷碧"]},
+{"q":"“墙角数枝梅，凌寒独自开。”横线上一句是（　　）。","ans":"凌寒独自开","wrong":["墙角数枝梅","遥知不是雪","为有暗香来"]},
+{"q":"“儿童散学归来早，忙趁东风放纸鸢。”横线上一句是（　　）。","ans":"忙趁东风放纸鸢","wrong":["草长莺飞二月天","拂堤杨柳醉春烟","儿童散学归来早"]},
+{"q":"“随风潜入夜，润物细无声。”横线上一句是（　　）。","ans":"润物细无声","wrong":["好雨知时节","当春乃发生","随风潜入夜"]}
+],
+"idiom":[
+{"q":"比喻不主动努力，存侥幸心理希望意外收获的成语是（　　）。","ans":"守株待兔","wrong":["画蛇添足","亡羊补牢","掩耳盗铃"]},
+{"q":"比喻目光短浅、没有远见的成语是（　　）。","ans":"井底之蛙","wrong":["守株待兔","画蛇添足","愚公移山"]},
+{"q":"比喻说话做事前后不一致、互相抵触的成语是（　　）。","ans":"自相矛盾","wrong":["守株待兔","画龙点睛","亡羊补牢"]},
+{"q":"比喻多此一举的成语是（　　）。","ans":"画蛇添足","wrong":["锦上添花","雪中送炭","画龙点睛"]},
+{"q":"比喻自己欺骗自己、掩盖不住事实的成语是（　　）。","ans":"掩耳盗铃","wrong":["守株待兔","亡羊补牢","井底之蛙"]},
+{"q":"比喻出了问题及时补救还来得及的成语是（　　）。","ans":"亡羊补牢","wrong":["守株待兔","画蛇添足","掩耳盗铃"]},
+{"q":"比喻模仿别人不成、反而丢了自己本事的成语是（　　）。","ans":"邯郸学步","wrong":["守株待兔","画龙点睛","东施效颦"]},
+{"q":"形容本领高强、办法很多的成语是（　　）。","ans":"神通广大","wrong":["无能为力","束手无策","一无所长"]},
+{"q":"形容非常安静、连乌鸦麻雀声都没有的成语是（　　）。","ans":"鸦雀无声","wrong":["人声鼎沸","吵吵闹闹","沸沸扬扬"]},
+{"q":"形容事情非常明显、一眼就能看清的成语是（　　）。","ans":"一目了然","wrong":["含糊不清","扑朔迷离","云里雾里"]},
+{"q":"比喻没有真才实学、混在行家里充数的成语是（　　）。","ans":"滥竽充数","wrong":["守株待兔","画龙点睛","真才实学"]},
+{"q":"形容做事有始有终、长久坚持的成语是（　　）。","ans":"持之以恒","wrong":["半途而废","三天打鱼","虎头蛇尾"]},
+{"q":"比喻大家团结一心、力量就大的成语是（　　）。","ans":"众志成城","wrong":["一盘散沙","各自为政","孤军奋战"]},
+{"q":"形容勤学苦练、发愤图强的成语是（　　）。","ans":"悬梁刺股","wrong":["游手好闲","不学无术","懒散度日"]},
+{"q":"比喻眼光短浅、只看到眼前小利的成语是（　　）。","ans":"鼠目寸光","wrong":["高瞻远瞩","深谋远虑","胸怀大志"]}
+],
+"relate":[
+{"q":"（　　）天气很冷，（　　）他仍然坚持上学。","ans":"虽然……但是……","wrong":["因为……所以……","不但……而且……","如果……就……"]},
+{"q":"（　　）你努力，（　　）会取得好成绩。","ans":"只要……就……","wrong":["虽然……但是……","因为……所以……","不但……而且……"]},
+{"q":"他（　　）学习好，（　　）乐于助人。","ans":"不但……而且……","wrong":["虽然……但是……","因为……所以……","只要……就……"]},
+{"q":"（　　）明天不下雨，我们（　　）去春游。","ans":"如果……就……","wrong":["虽然……但是……","因为……所以……","不但……而且……"]},
+{"q":"（　　）他生病了，（　　）没来上学。","ans":"因为……所以……","wrong":["虽然……但是……","不但……而且……","如果……就……"]},
+{"q":"这本书（　　）有趣，（　　）很有教育意义。","ans":"不但……而且……","wrong":["虽然……但是……","因为……所以……","如果……就……"]},
+{"q":"（　　）困难多大，我们（　　）不放弃。","ans":"无论……都……","wrong":["虽然……但是……","因为……所以……","如果……就……"]},
+{"q":"（　　）认真听讲，（　　）能听懂老师讲的内容。","ans":"只有……才……","wrong":["虽然……但是……","因为……所以……","不但……而且……"]},
+{"q":"她（　　）会唱歌，（　　）会跳舞。","ans":"既……又……","wrong":["虽然……但是……","因为……所以……","如果……就……"]},
+{"q":"（　　）多看课外书，（　　）能增长知识。","ans":"只要……就……","wrong":["虽然……但是……","因为……所以……","不但……而且……"]},
+{"q":"（　　）坚持锻炼，身体（　　）会强壮。","ans":"只有……才……","wrong":["虽然……但是……","因为……所以……","如果……就……"]},
+{"q":"（　　）任务再艰巨，我们（　　）要想办法完成。","ans":"也","wrong":["就","都","还"]}
+],
+"punct":[
+{"q":"下列句子标点使用正确的一项是（　　）。","ans":"“加油！”他大声喊道。","wrong":["“加油”！他大声喊道。","“加油！他大声喊道。”","“加油”！他大声喊道。"]},
+{"q":"感叹句末尾一般使用的标点是（　　）。","ans":"！","wrong":["。","？","、"]},
+{"q":"疑问句末尾一般使用的标点是（　　）。","ans":"？","wrong":[".","！","、"]},
+{"q":"一句话说完，末尾一般使用的标点是（　　）。","ans":"。","wrong":["？","！","、"]},
+{"q":"表示句子内部并列词语之间的停顿用（　　）。","ans":"、","wrong":["。","，","！"]},
+{"q":"直接引用别人的话时，通常使用的标号是（　　）。","ans":"“”","wrong":["《》","（）","——"]},
+{"q":"书名、篇名通常使用的标号是（　　）。","ans":"《》","wrong":["“”","（）","——"]},
+{"q":"“请问，到图书馆怎么走？”这句话的标点使用（　　）。","ans":"正确","wrong":["错误，问号应在引号外","错误，逗号多余","错误，应去掉问号"]},
+{"q":"一句话中间的一般性停顿用（　　）。","ans":"，","wrong":["。","、","！"]},
+{"q":"“妈妈回来了。”他喊道。这句话的标点使用（　　）。","ans":"正确","wrong":["错误，句号应在引号外","错误，应改为逗号","错误，喊道后应加冒号"]}
+],
+"lit":[
+{"q":"《静夜思》的作者是（　　）。","ans":"李白","wrong":["杜甫","白居易","王维"]},
+{"q":"《春晓》的作者是（　　）。","ans":"孟浩然","wrong":["李白","杜甫","王维"]},
+{"q":"《咏柳》的作者是（　　）。","ans":"贺知章","wrong":["李白","杜甫","白居易"]},
+{"q":"《登鹳雀楼》的作者是（　　）。","ans":"王之涣","wrong":["李白","杜甫","王维"]},
+{"q":"《悯农》的作者是（　　）。","ans":"李绅","wrong":["李白","杜甫","白居易"]},
+{"q":"“两个黄鹂鸣翠柳”出自杜甫的（　　）。","ans":"《绝句》","wrong":["《春晓》","《静夜思》","《登鹳雀楼》"]},
+{"q":"《早发白帝城》的作者是（　　）。","ans":"李白","wrong":["杜甫","王维","白居易"]},
+{"q":"《鹿柴》的作者是（　　）。","ans":"王维","wrong":["李白","杜甫","孟浩然"]},
+{"q":"“桃花潭水深千尺”出自李白的（　　）。","ans":"《赠汪伦》","wrong":["《静夜思》","《春晓》","《登鹳雀楼》"]},
+{"q":"《池上》的作者是（　　）。","ans":"白居易","wrong":["李白","杜甫","王维"]},
+{"q":"《望庐山瀑布》的作者是（　　）。","ans":"李白","wrong":["杜甫","王维","白居易"]},
+{"q":"《小儿垂钓》的作者是（　　）。","ans":"胡令能","wrong":["李白","杜甫","白居易"]}
+],
+"classic":[
+{"q":"“学而时习之，不亦说乎”出自（　　）。","ans":"《论语》","wrong":["《孟子》","《大学》","《中庸》"]},
+{"q":"“三人行，必有我师焉”出自（　　）。","ans":"《论语》","wrong":["《孟子》","《道德经》","《大学》"]},
+{"q":"“温故而知新”出自（　　）。","ans":"《论语》","wrong":["《孟子》","《大学》","《中庸》"]},
+{"q":"“己所不欲，勿施于人”出自（　　）。","ans":"《论语》","wrong":["《孟子》","《大学》","《道德经》"]},
+{"q":"“知之为知之，不知为不知”出自（　　）。","ans":"《论语》","wrong":["《孟子》","《大学》","《中庸》"]},
+{"q":"“有朋自远方来，不亦乐乎”出自（　　）。","ans":"《论语》","wrong":["《孟子》","《大学》","《诗经》"]},
+{"q":"“少壮不努力，老大徒伤悲”出自（　　）。","ans":"《长歌行》","wrong":["《论语》","《孟子》","《诗经》"]},
+{"q":"“玉不琢，不成器”出自（　　）。","ans":"《礼记·学记》","wrong":["《论语》","《孟子》","《大学》"]},
+{"q":"“千里之行，始于足下”出自（　　）。","ans":"《道德经》","wrong":["《论语》","《孟子》","《大学》"]},
+{"q":"“读书百遍，其义自见”这句话告诉我们（　　）。","ans":"多读自然明白","wrong":["多写自然明白","多背自然明白","多问自然明白"]}
+]
+};
 
 
 function genChinesePractice(path) {
@@ -3944,10 +4180,148 @@ function genChinesePractice(path) {
     }
 
     /* ===== 英语考试题型题库（贴合三年级 人教版（PEP） 考试卷结构） ===== */
-        const EN_GRAMMAR = [{"q":"I ___ a student.","options":["am","is","are","be"],"ans":"am"},{"q":"She ___ a girl.","options":["am","is","are","be"],"ans":"is"},{"q":"They ___ boys.","options":["am","is","are","be"],"ans":"are"},{"q":"This is ___ apple.","options":["a","an","the","/"],"ans":"an"},{"q":"That is ___ book.","options":["a","an","the","/"],"ans":"a"},{"q":"___ your name?","options":["What","What's","How","Who"],"ans":"What's"},{"q":"How ___ you?","options":["am","is","are","be"],"ans":"are"},{"q":"He ___ a dog.","options":["have","has","is","do"],"ans":"has"},{"q":"We ___ friends.","options":["am","is","are","be"],"ans":"are"},{"q":"What ___ this?","options":["am","is","are","be"],"ans":"is"},{"q":"It ___ a cat.","options":["am","is","are","be"],"ans":"is"},{"q":"I can ___ .","options":["swim","swims","swimming","swam"],"ans":"swim"},{"q":"Do you like ___?","options":["apple","apples","an apple","a apple"],"ans":"apples"},{"q":"How many ___ do you have?","options":["book","books","a book","bookes"],"ans":"books"},{"q":"Where ___ the book?","options":["am","is","are","be"],"ans":"is"}];
-    const EN_SCENE = [{"q":"— Hello! — ___","options":["Hi!","Goodbye!","Sorry.","No."],"ans":"Hi!"},{"q":"— What's your name? — ___","options":["My name is Tom.","I am fine.","I am ten.","Yes, I am."],"ans":"My name is Tom."},{"q":"— How are you? — ___","options":["I'm fine, thank you.","I am a boy.","I like red.","It is a book."],"ans":"I'm fine, thank you."},{"q":"— Nice to meet you. — ___","options":["Nice to meet you, too.","Thank you.","You are welcome.","I am sorry."],"ans":"Nice to meet you, too."},{"q":"— Thank you! — ___","options":["You're welcome.","I am sorry.","No, thanks.","OK."],"ans":"You're welcome."},{"q":"— Where are you from? — ___","options":["I am from China.","I am a girl.","I like red.","It is a book."],"ans":"I am from China."},{"q":"— What colour is it? — ___","options":["It is blue.","It is a bag.","Yes, it is.","I like blue."],"ans":"It is blue."},{"q":"— How many books do you have? — ___","options":["I have five.","I am five.","It is five.","Yes, I do."],"ans":"I have five."},{"q":"— Who's that boy? — ___","options":["He is my brother.","She is my sister.","It is a dog.","I am a boy."],"ans":"He is my brother."},{"q":"— Good morning, Miss Li! — ___","options":["Good morning!","Goodbye!","I am sorry.","Thank you."],"ans":"Good morning!"}];
-    const EN_TRANS = [{"q":"I am a boy. (改为一般疑问句)","options":["Are you a boy?","Do you a boy?","Am I a boy?","You are a boy?"],"ans":"Are you a boy?"},{"q":"She is a student. (改为一般疑问句)","options":["Is she a student?","Do she a student?","Has she a student?","She is a student?"],"ans":"Is she a student?"},{"q":"This is a cat. (改为复数句)","options":["These are cats.","This are cat.","These is cats.","This is cats."],"ans":"These are cats."},{"q":"I like apples. (改为否定句)","options":["I don't like apples.","I not like apples.","I no like apples.","I doesn't like apples."],"ans":"I don't like apples."},{"q":"They are red. (改为单数句)","options":["It is red.","It red.","This are red.","They is red."],"ans":"It is red."},{"q":"I can swim. (改为一般疑问句)","options":["Can you swim?","Do you swim?","Are you swim?","You can swim?"],"ans":"Can you swim?"}];
-    const EN_READ = [{"passage":"I am Amy. I am from the UK. I like red. I have a red bag.","q":"Where is Amy from?","options":["The UK.","The USA.","China.","Canada."],"ans":"The UK."},{"passage":"Tom has a dog. The dog is white. Tom walks the dog every day.","q":"What colour is the dog?","options":["White.","Black.","Brown.","Yellow."],"ans":"White."},{"passage":"It is sunny today. We go to the zoo. We see a panda. The panda is black and white.","q":"What do they see at the zoo?","options":["A panda.","A tiger.","A lion.","An elephant."],"ans":"A panda."},{"passage":"I have a new friend. Her name is Lily. She is a girl. She likes apples and red dresses.","q":"What does Lily like?","options":["Apples.","Bananas.","Pears.","Oranges."],"ans":"Apples."},{"passage":"Spring is warm. The flowers are red, yellow and pink. The birds sing in the tree.","q":"What colour are the flowers?","options":["Red, yellow and pink.","Only red.","Blue.","Black."],"ans":"Red, yellow and pink."},{"passage":"A little boy sees a dog on the street. The dog is hungry. The boy gives it some food. They become good friends.","q":"Why does the boy give the dog food?","options":["Because the dog is hungry.","Because the dog is big.","Because he is afraid.","Because the dog is noisy."],"ans":"Because the dog is hungry."}];
+        const EN_GRAMMAR = [
+  // be 动词
+  {"q":"I ___ a student.","options":["am","is","are","be"],"ans":"am"},
+  {"q":"She ___ a girl.","options":["am","is","are","be"],"ans":"is"},
+  {"q":"We ___ friends.","options":["am","is","are","be"],"ans":"are"},
+  {"q":"He ___ a boy.","options":["am","is","are","be"],"ans":"is"},
+  {"q":"They ___ from China.","options":["am","is","are","be"],"ans":"are"},
+  {"q":"It ___ a cat.","options":["am","is","are","be"],"ans":"is"},
+  {"q":"You ___ very kind.","options":["am","is","are","be"],"ans":"are"},
+  // a / an
+  {"q":"I have ___ apple.","options":["a","an","the","/"],"ans":"an"},
+  {"q":"This is ___ orange dog.","options":["a","an","the","/"],"ans":"an"},
+  {"q":"She has ___ book.","options":["a","an","the","some"],"ans":"a"},
+  {"q":"He is ___ English boy.","options":["a","an","the","/"],"ans":"an"},
+  {"q":"I see ___ elephant.","options":["a","an","the","some"],"ans":"an"},
+  {"q":"There is ___ cat on the desk.","options":["a","an","the","/"],"ans":"a"},
+  // this / that / these / those
+  {"q":"___ is a pen. (近处单数)","options":["This","That","These","Those"],"ans":"This"},
+  {"q":"___ is a far tree. (远处单数)","options":["This","That","These","Those"],"ans":"That"},
+  {"q":"___ are my books. (近处复数)","options":["This","That","These","Those"],"ans":"These"},
+  {"q":"___ are your shoes. (远处复数)","options":["This","That","These","Those"],"ans":"Those"},
+  {"q":"— What is ___? — It is a ruler.","options":["this","that","these","those"],"ans":"this"},
+  // have / has
+  {"q":"I ___ a new bag.","options":["have","has","having","haves"],"ans":"have"},
+  {"q":"Tom ___ a blue pencil.","options":["have","has","having","haves"],"ans":"has"},
+  {"q":"My father ___ a car.","options":["have","has","having","haves"],"ans":"has"},
+  {"q":"We ___ two dogs.","options":["have","has","having","haves"],"ans":"have"},
+  {"q":"She ___ long hair.","options":["have","has","having","haves"],"ans":"has"},
+  // can / can't
+  {"q":"I ___ swim very well.","options":["can","can't","am","do"],"ans":"can"},
+  {"q":"He ___ fly a kite.","options":["can","can't","is","does"],"ans":"can"},
+  {"q":"She ___ ride a bike. (否定)","options":["can","can't","is","does"],"ans":"can't"},
+  {"q":"— ___ you sing? — Yes, I can.","options":["Can","Do","Are","Am"],"ans":"Can"},
+  {"q":"Birds ___ fly in the sky.","options":["can","can't","are","do"],"ans":"can"},
+  // do / does
+  {"q":"___ you like apples?","options":["Do","Does","Are","Is"],"ans":"Do"},
+  {"q":"___ he like red?","options":["Do","Does","Are","Is"],"ans":"Does"},
+  {"q":"___ they have a ball?","options":["Do","Does","Are","Is"],"ans":"Do"},
+  {"q":"___ she go to school by bus?","options":["Do","Does","Are","Is"],"ans":"Does"},
+  {"q":"I ___ not like eggs.","options":["do","does","am","is"],"ans":"do"},
+  // 名词复数
+  {"q":"One book, two ___.","options":["book","books","bookes","book's"],"ans":"books"},
+  {"q":"One box, three ___.","options":["box","boxs","boxes","boxies"],"ans":"boxes"},
+  {"q":"One bus, many ___.","options":["bus","buss","buses","busies"],"ans":"buses"},
+  {"q":"One child, two ___.","options":["child","childs","children","childes"],"ans":"children"},
+  {"q":"One foot, two ___.","options":["foot","foots","feet","feets"],"ans":"feet"},
+  // 介词
+  {"q":"The cat is ___ the box. (在……里面)","options":["in","on","under","at"],"ans":"in"},
+  {"q":"The book is ___ the desk. (在……上面)","options":["in","on","under","to"],"ans":"on"},
+  {"q":"The ball is ___ the chair. (在……下面)","options":["in","on","under","of"],"ans":"under"},
+  {"q":"I go to school ___ seven. (在……点)","options":["in","on","at","to"],"ans":"at"},
+  // 疑问词
+  {"q":"— ___ is your name? — My name is Lily.","options":["What","Who","Where","How"],"ans":"What"},
+  {"q":"— ___ is that boy? — He is my brother.","options":["What","Who","Where","How"],"ans":"Who"},
+  {"q":"— ___ are you from? — I am from China.","options":["What","Who","Where","How"],"ans":"Where"},
+  {"q":"— ___ old are you? — I am nine.","options":["What","Who","Where","How"],"ans":"How"},
+  {"q":"— ___ pencils do you have? — I have five.","options":["What","How many","Where","Who"],"ans":"How many"}
+];
+    const EN_SCENE = [
+  {"q":"— Hello! — ___","options":["Hi!","Goodbye!","Sorry.","No."],"ans":"Hi!"},
+  {"q":"— Good morning! — ___","options":["Good morning!","Good night!","Goodbye!","Thanks."],"ans":"Good morning!"},
+  {"q":"— What's your name? — ___","options":["My name is Tom.","I am fine.","I am ten.","Yes, I am."],"ans":"My name is Tom."},
+  {"q":"— How are you? — ___","options":["I'm fine, thank you.","I am nine.","My name is Lin.","Goodbye."],"ans":"I'm fine, thank you."},
+  {"q":"— Nice to meet you. — ___","options":["Nice to meet you, too.","Hello!","Goodbye!","Thank you."],"ans":"Nice to meet you, too."},
+  {"q":"— Goodbye! — ___","options":["Bye!","Hello!","Thanks.","Sorry."],"ans":"Bye!"},
+  {"q":"— Where are you from? — ___","options":["I'm from China.","I am nine.","I like red.","I am a boy."],"ans":"I'm from China."},
+  {"q":"— Who's that woman? — ___","options":["She is my mother.","He is my father.","It is a cat.","They are friends."],"ans":"She is my mother."},
+  {"q":"— Who's that man? — ___","options":["He is my father.","She is my mother.","It is a dog.","We are pupils."],"ans":"He is my father."},
+  {"q":"— What's this? — ___","options":["It's a book.","This is book.","Is a book.","Book."],"ans":"It's a book."},
+  {"q":"— What colour is it? — ___","options":["It's red.","It's a red.","Red colour.","A red."],"ans":"It's red."},
+  {"q":"— What colour do you like? — ___","options":["I like blue.","I am blue.","Blue is.","A blue."],"ans":"I like blue."},
+  {"q":"— Can I have some water? — ___","options":["Sure. Here you are.","No, you can.","Yes, I can.","Thank you."],"ans":"Sure. Here you are."},
+  {"q":"— I like apples. — ___","options":["Me, too.","I am too.","You too.","Too me."],"ans":"Me, too."},
+  {"q":"— Let's go to school! — ___","options":["OK!","No.","Sorry.","Thanks."],"ans":"OK!"},
+  {"q":"— How many crayons do you have? — ___","options":["I have twelve.","I am twelve.","Twelve crayons is.","Yes, twelve."],"ans":"I have twelve."},
+  {"q":"— Happy birthday! — ___","options":["Thank you!","Happy birthday!","OK!","Sorry."],"ans":"Thank you!"},
+  {"q":"— Thank you. — ___","options":["You're welcome.","Thank you.","OK.","Sorry."],"ans":"You're welcome."},
+  {"q":"— Sorry. — ___","options":["That's OK.","Thank you.","Goodbye.","No."],"ans":"That's OK."},
+  {"q":"— May I sit here? — ___","options":["Sure.","No, you can't.","I am fine.","Thank you."],"ans":"Sure."},
+  {"q":"— What do you like? — ___","options":["I like oranges.","I am oranges.","Orange is.","A orange."],"ans":"I like oranges."},
+  {"q":"— Is this your book? — ___","options":["Yes, it is.","Yes, I am.","No, I am not.","It is book."],"ans":"Yes, it is."},
+  {"q":"— Are those your pens? — ___","options":["No, they aren't.","No, it isn't.","Yes, it is.","They are pen."],"ans":"No, they aren't."},
+  {"q":"— Open your book, please. — ___","options":["OK.","No.","Sorry.","Thank you."],"ans":"OK."},
+  {"q":"— Have some milk. — ___","options":["Thank you.","No, I can't.","Yes, I do.","I like."],"ans":"Thank you."},
+  {"q":"— What's your favourite food? — ___","options":["I like rice.","I am rice.","Rice is.","A rice."],"ans":"I like rice."},
+  {"q":"— How do you go to school? — ___","options":["By bus.","I am bus.","Bus is.","A bus."],"ans":"By bus."},
+  {"q":"— See you! — ___","options":["See you!","Hello!","Thanks.","Sorry."],"ans":"See you!"},
+  {"q":"— Good afternoon! — ___","options":["Good afternoon!","Good morning!","Good night!","Thanks."],"ans":"Good afternoon!"},
+  {"q":"— What time is it? — ___","options":["It's three o'clock.","Three clock.","I am three.","Three o'clock is."],"ans":"It's three o'clock."}
+];
+    const EN_TRANS = [
+  {"q":"I am a boy. (改为一般疑问句)","options":["Are you a boy?","Do you a boy?","Am I a boy?","You are a boy?"],"ans":"Are you a boy?"},
+  {"q":"She is a student. (改为一般疑问句)","options":["Is she a student?","Do she a student?","Has she a student?","She is a student?"],"ans":"Is she a student?"},
+  {"q":"They are friends. (改为一般疑问句)","options":["Are they friends?","Do they friends?","Is they friends?","They are friends?"],"ans":"Are they friends?"},
+  {"q":"He has a dog. (改为一般疑问句)","options":["Does he have a dog?","Do he have a dog?","Has he a dog?","He has a dog?"],"ans":"Does he have a dog?"},
+  {"q":"I like apples. (改为一般疑问句)","options":["Do you like apples?","Are you like apples?","Am I like apples?","You like apples?"],"ans":"Do you like apples?"},
+  {"q":"This is a cat. (改为一般疑问句)","options":["Is this a cat?","Do this a cat?","Are this a cat?","This is a cat?"],"ans":"Is this a cat?"},
+  {"q":"I am a girl. (改为否定句)","options":["I am not a girl.","I don't a girl.","I not a girl.","Am not I a girl."],"ans":"I am not a girl."},
+  {"q":"She is a teacher. (改为否定句)","options":["She is not a teacher.","She doesn't a teacher.","She not a teacher.","Is not she a teacher."],"ans":"She is not a teacher."},
+  {"q":"They are blue. (改为否定句)","options":["They are not blue.","They don't blue.","They not blue.","Are not they blue."],"ans":"They are not blue."},
+  {"q":"He has a book. (改为否定句)","options":["He does not have a book.","He don't have a book.","He not has a book.","Has not he a book."],"ans":"He does not have a book."},
+  {"q":"I like eggs. (改为否定句)","options":["I do not like eggs.","I am not like eggs.","I not like eggs.","Do not I like eggs."],"ans":"I do not like eggs."},
+  {"q":"This is a pen. (改为复数句)","options":["These are pens.","This are pens.","These is pens.","Those is pens."],"ans":"These are pens."},
+  {"q":"That is a box. (改为复数句)","options":["Those are boxes.","That are boxes.","Those is boxes.","These are box."],"ans":"Those are boxes."},
+  {"q":"It is an apple. (改为复数句)","options":["They are apples.","It are apples.","These are apple.","They is apples."],"ans":"They are apples."},
+  {"q":"He is a boy. (改为复数句)","options":["They are boys.","He are boys.","Those are boy.","They is boys."],"ans":"They are boys."},
+  {"q":"I am a pupil. (改为复数句)","options":["We are pupils.","I are pupils.","We is pupils.","They are pupil."],"ans":"We are pupils."},
+  {"q":"The book is on the desk. (对划线 on the desk 提问)","options":["Where is the book?","What is the book?","Who is the book?","How is the book?"],"ans":"Where is the book?"},
+  {"q":"My name is Lucy. (对划线 Lucy 提问)","options":["What is your name?","Who is your name?","Where is your name?","How is your name?"],"ans":"What is your name?"},
+  {"q":"I have five pencils. (对划线 five 提问)","options":["How many pencils do you have?","What pencils do you have?","Where are your pencils?","Who has pencils?"],"ans":"How many pencils do you have?"},
+  {"q":"He is my father. (对划线 my father 提问)","options":["Who is he?","What is he?","Where is he?","How is he?"],"ans":"Who is he?"},
+  {"q":"The dog is white. (对划线 white 提问)","options":["What colour is the dog?","Where is the dog?","Who is the dog?","How is the dog?"],"ans":"What colour is the dog?"},
+  {"q":"She is nine. (对划线 nine 提问)","options":["How old is she?","What old is she?","Where is she?","Who is she?"],"ans":"How old is she?"},
+  {"q":"They go to school by bus. (改为一般疑问句)","options":["Do they go to school by bus?","Are they go to school by bus?","Do they goes by bus?","They go to school by bus?"],"ans":"Do they go to school by bus?"},
+  {"q":"We can sing. (改为否定句)","options":["We can not sing.","We don't sing.","We not can sing.","Can not we sing."],"ans":"We can not sing."}
+];
+    const EN_READ = [
+  {"passage":"I am Amy. I am from the UK. I like red. I have a red bag.","q":"Where is Amy from?","options":["The UK.","The USA.","China.","Canada."],"ans":"The UK."},
+  {"passage":"Tom has a dog. The dog is white. Tom walks the dog every day.","q":"What colour is the dog?","options":["White.","Black.","Brown.","Yellow."],"ans":"White."},
+  {"passage":"Lucy is a girl. She is nine. She likes apples and bananas.","q":"How old is Lucy?","options":["Nine.","Eight.","Ten.","Seven."],"ans":"Nine."},
+  {"passage":"My name is Bob. I have a green pencil box. It has two pens.","q":"What colour is Bob's pencil box?","options":["Green.","Red.","Blue.","Yellow."],"ans":"Green."},
+  {"passage":"We are in the classroom. The teacher is Miss Li. She is kind.","q":"Who is the teacher?","options":["Miss Li.","Mr Li.","Bob.","Amy."],"ans":"Miss Li."},
+  {"passage":"I have a cat. Its name is Mimi. It is black and white.","q":"What is the cat's name?","options":["Mimi.","Tom.","Lily.","Coco."],"ans":"Mimi."},
+  {"passage":"There are three apples on the table. Two are red, one is green.","q":"How many apples are there?","options":["Three.","Two.","One.","Four."],"ans":"Three."},
+  {"passage":"Jack is ten. He can ride a bike. He goes to school by bike.","q":"How does Jack go to school?","options":["By bike.","By bus.","On foot.","By car."],"ans":"By bike."},
+  {"passage":"This is my mother. She is a doctor. She helps sick people.","q":"What is the writer's mother?","options":["A doctor.","A teacher.","A nurse.","A farmer."],"ans":"A doctor."},
+  {"passage":"I like animals. I have a rabbit. It is white and cute.","q":"What animal does the writer have?","options":["A rabbit.","A dog.","A cat.","A bird."],"ans":"A rabbit."},
+  {"passage":"Today is sunny. We go to the park. We fly a kite together.","q":"What's the weather like today?","options":["Sunny.","Rainy.","Snowy.","Windy."],"ans":"Sunny."},
+  {"passage":"My father is a farmer. He has a big farm with pigs and ducks.","q":"What does the writer's father have?","options":["A big farm.","A small shop.","A school.","A hospital."],"ans":"A big farm."},
+  {"passage":"Lily has a brother. His name is Sam. Sam is six years old.","q":"How old is Sam?","options":["Six.","Five.","Seven.","Eight."],"ans":"Six."},
+  {"passage":"The library is big. There are many books. I read a story book.","q":"Where does the writer read?","options":["In the library.","At home.","In the park.","At school."],"ans":"In the library."},
+  {"passage":"I am hungry. Mum gives me some bread and milk. I am happy.","q":"What does Mum give the writer?","options":["Bread and milk.","Cake and water.","Rice and eggs.","Apples and juice."],"ans":"Bread and milk."},
+  {"passage":"There is a ball under the chair. It is a blue ball. It is mine.","q":"Where is the blue ball?","options":["Under the chair.","On the desk.","In the box.","On the bed."],"ans":"Under the chair."},
+  {"passage":"My birthday is in May. I get many gifts. I like the toy car best.","q":"When is the writer's birthday?","options":["In May.","In March.","In June.","In July."],"ans":"In May."},
+  {"passage":"We have a new classroom. It is clean and bright. We love it.","q":"How is the new classroom?","options":["Clean and bright.","Small and dark.","Old and big.","Dirty and small."],"ans":"Clean and bright."},
+  {"passage":"Tom and Jerry are good friends. They play football after school.","q":"What do Tom and Jerry do after school?","options":["Play football.","Read books.","Watch TV.","Sing songs."],"ans":"Play football."},
+  {"passage":"I see a bird in the tree. It is yellow. It can sing a song.","q":"What colour is the bird?","options":["Yellow.","Red.","Blue.","Green."],"ans":"Yellow."},
+  {"passage":"This is my schoolbag. It is pink. I put my books and pencil in it.","q":"What colour is the schoolbag?","options":["Pink.","Blue.","Black.","Green."],"ans":"Pink."},
+  {"passage":"My grandma is old. She cooks nice food for us. We love her.","q":"Who cooks nice food?","options":["Grandma.","Mum.","Dad.","Sister."],"ans":"Grandma."},
+  {"passage":"There are seven days in a week. My favourite day is Sunday.","q":"How many days are there in a week?","options":["Seven.","Six.","Five.","Eight."],"ans":"Seven."},
+  {"passage":"I can draw a picture. I use red, yellow and blue crayons.","q":"What does the writer draw with?","options":["Crayons.","Pencils.","A pen.","A brush."],"ans":"Crayons."}
+];
 function genEnglishQuiz(words) {
       // 考试题型组合：词汇(本课) + 语法选择 + 情景交际 + 句型转换 + 阅读理解，合计 10 题
       const allEn = Object.values(englishVocab).flat().map(w => w.en);
@@ -4332,112 +4706,187 @@ function fr(n,d){ if(d<0){n=-n;d=-d;} const g=gcd(n,d)||1; const nn=n/g, dd=d/g;
 const examMathPool = {
   0: {
     0: [
-        ()=>{ return {type:'fill', q:'1 分 =（　　）秒', ans:60, explain:'1 分 = 60 秒'}; },
-        ()=>{ const a=r(1,4); return {type:'solve', q:'小明写作业用了 '+ (a*10+5) +' 分钟，换算成秒是（　　）秒。', ans:(a*10+5)*60, explain:'分钟变秒要乘 60'}; },
-        ()=>{ return {type:'judge', q:'分针走 1 小格是 1 分钟，走 1 大格是 5 分钟。（　　）', ans:'对', explain:'钟面一大格有 5 小格'}; },
-        ()=>{ const a=r(2,5), b=r(10,50); return {type:'solve', q:'一节课 '+ (a*10) +' 分钟，课间休息 '+ b +' 分钟，一共（　　）分钟。', ans:a*10+b, explain:'两段时长相加'}; }
-      ],
+      ()=>{ const a=r(1,9); return {type:'fill', q:a+' 分 =（　　）秒', ans:a*60, explain:'1 分 = 60 秒'}; },
+      ()=>{ const a=r(1,5); return {type:'fill', q:a+' 时 =（　　）分', ans:a*60, explain:'1 时 = 60 分'}; },
+      ()=>{ const a=r(2,9); return {type:'fill', q:'秒针走 ' + a + ' 圈是（　　）秒', ans:a*60, explain:'秒针走 1 圈是 60 秒'}; },
+      ()=>{ return {type:'choice', q:'钟面上，分针走一圈是（　　）。', options:['1 时','1 分','1 秒'], ans:'1 时', explain:'分针走一圈是 60 分，也就是 1 时'}; },
+      ()=>{ const a=r(15,40); return {type:'solve', q:'小明每天早晨读书 ' + a + ' 分钟，一周（7 天）共读书（　　）分钟。', ans:a*7, explain:'每天读书时间 × 7 天'}; },
+      ()=>{ return {type:'judge', q:'时针走一大格是 1 小时，走一圈是 12 小时。（　　）', ans:'对', explain:'钟面一圈有 12 大格'}; },
+      ()=>{ return {type:'fill', q:'分针走一小格是（　　）分，走一大格是（　　）分', ans:'1 分 / 5 分', explain:'一大格有 5 小格'}; },
+      ()=>{ const a=r(20,50); return {type:'solve', q:'课间休息 10 分钟，眼保健操 ' + a + ' 分钟，两项一共（　　）分钟。', ans:10+a, explain:'两段时长相加'}; }
+    ],
     1: [
-        ()=>{ const a=r(100,9000), b=r(100,9000); const big=Math.max(a,b), sm=Math.min(a,b); return {type:'calc', q:'计算： '+big+' + '+sm+' = ', ans:big+sm, explain:'相同数位对齐，从个位加起，满十进一'}; },
-        ()=>{ const a=r(500,9000), b=r(100,Math.min(a,8999)); return {type:'calc', q:'计算： '+a+' - '+b+' = ', ans:a-b, explain:'相同数位对齐，从个位减起，不够退一'}; },
-        ()=>{ const a=r(300,2000), b=r(50,300); return {type:'solve', q:'书店有 '+a+' 本书，上午卖出 '+b+' 本，还剩（　　）本。', ans:a-b, explain:'总数减卖出的等于剩下的'}; },
-        ()=>{ return {type:'judge', q:'笔算加减法时，相同数位要对齐。（　　）', ans:'对', explain:'对齐数位是正确计算的前提'}; }
-      ],
+      ()=>{ const a=r(100,900), b=r(100,900); return {type:'calc', q:a+' + '+b+' = ', ans:a+b, explain:'相同数位对齐，从个位加起'}; },
+      ()=>{ const a=r(500,9000), b=r(100,Math.min(a,8999)); return {type:'calc', q:a+' - '+b+' = ', ans:a-b, explain:'从个位减起，不够向前一位借 1'}; },
+      ()=>{ return {type:'fill', q:'验算减法时，可以用（　　）法验算。', ans:'加', explain:'差 + 减数 = 被减数'}; },
+      ()=>{ const a=r(300,900), b=r(50,200); return {type:'solve', q:'书店有 ' + a + ' 本书，上午卖出 ' + b + ' 本，还剩（　　）本。', ans:a-b, explain:'总数 - 卖出的 = 剩下的'}; },
+      ()=>{ return {type:'choice', q:'笔算加法时，相同数位要（　　）。', options:['对齐','分开写','随便写'], ans:'对齐', explain:'对齐才能正确相加'}; },
+      ()=>{ return {type:'judge', q:'笔算加减法，都要从个位算起。（　　）', ans:'对', explain:'从个位算起是笔算基本规则'}; },
+      ()=>{ const a=r(200,800), b=r(100,400); return {type:'solve', q:'妈妈带了 ' + a + ' 元，买菜花 ' + b + ' 元，还剩（　　）元。', ans:a-b, explain:'带的钱 - 花掉的钱'}; },
+      ()=>{ return {type:'fill', q:'估算：398 + 205 ≈（　　）（填整百近似数）', ans:600, explain:'398≈400，205≈200，400+200=600'}; }
+    ],
     2: [
-        ()=>{ const a=r(2,9); return {type:'fill', q:a+' 厘米 =（　　）毫米', ans:a*10, explain:'1 厘米 = 10 毫米'}; },
-        ()=>{ const a=r(2,9); return {type:'fill', q:a+' 分米 =（　　）厘米', ans:a*10, explain:'1 分米 = 10 厘米'}; },
-        ()=>{ const a=r(1,8); return {type:'fill', q:a+' 千米 =（　　）米', ans:a*1000, explain:'1 千米 = 1000 米'}; },
-        ()=>{ return {type:'choice', q:'计量较重物品的质量，通常用（　　）作单位。', options:['吨','千克','克'], ans:'吨', correct:0, explain:'很重的东西用吨'}; }
-      ],
+      ()=>{ const a=r(2,9); return {type:'fill', q:a+' 厘米 =（　　）毫米', ans:a*10, explain:'1 厘米 = 10 毫米'}; },
+      ()=>{ const a=r(2,9); return {type:'fill', q:a+' 分米 =（　　）厘米', ans:a*10, explain:'1 分米 = 10 厘米'}; },
+      ()=>{ const a=r(1,8); return {type:'fill', q:a+' 千米 =（　　）米', ans:a*1000, explain:'1 千米 = 1000 米'}; },
+      ()=>{ return {type:'choice', q:'计量较重的物品，通常用（　　）作单位。', options:['吨','千克','克'], ans:'吨', explain:'很重的东西用吨'}; },
+      ()=>{ const a=r(2,9); return {type:'fill', q:a+' 米 =（　　）厘米', ans:a*100, explain:'1 米 = 100 厘米'}; },
+      ()=>{ return {type:'judge', q:'1 吨 = 1000 千克。（　　）', ans:'对', explain:'吨和千克的进率是 1000'}; },
+      ()=>{ const a=r(5,20), b=r(1,Math.min(a,10)); return {type:'solve', q:'一根绳子长 ' + a + ' 米，用掉 ' + b + ' 米，还剩（　　）米。', ans:a-b, explain:'总长 - 用掉的'}; },
+      ()=>{ return {type:'choice', q:'一本数学书大约厚（　　）。', options:['7 毫米','7 厘米','7 分米'], ans:'7 毫米', explain:'书厚用毫米较合适'}; }
+    ],
     3: [
-        ()=>{ const a=r(1000,8000), b=r(1000,8000); return {type:'calc', q:'计算： '+a+' + '+b+' = ', ans:a+b, explain:'从个位加起，满十进一'}; },
-        ()=>{ const a=r(3000,9000), b=r(1000,a); return {type:'calc', q:'计算： '+a+' - '+b+' = ', ans:a-b, explain:'从个位减起，不够退一'}; },
-        ()=>{ const a=r(2000,6000), b=r(1000,3000); return {type:'solve', q:'三年级有 '+a+' 人，四年级有 '+b+' 人，两个年级一共约（　　）人。', ans:a+b, explain:'把两个年级人数相加'}; },
-        ()=>{ const a=r(2000,5000), b=r(500,1500); return {type:'solve', q:'图书馆原有 '+a+' 本书，借出 '+b+' 本，还剩（　　）本。', ans:a-b, explain:'用原数减去借出的'}; }
-      ],
+      ()=>{ const a=r(100,500), b=r(100,500), c=r(50,300); return {type:'calc', q:a+' + '+b+' + '+c+' = ', ans:a+b+c, explain:'连加，从左到右算'}; },
+      ()=>{ const a=r(800,2000), b=r(100,500), c=r(50,300); return {type:'calc', q:a+' - '+b+' - '+c+' = ', ans:a-b-c, explain:'连减，依次减去'}; },
+      ()=>{ const a=r(500,1500), b=r(100,500), c=r(50,300); return {type:'calc', q:a+' + '+b+' - '+c+' = ', ans:a+b-c, explain:'加减混合，从左到右'}; },
+      ()=>{ const a=r(200,400), b=r(200,400); return {type:'solve', q:'三年级有 ' + a + ' 人，四年级有 ' + b + ' 人，两个年级一共有（　　）人。', ans:a+b, explain:'两个年级人数相加'}; },
+      ()=>{ const a=r(600,1000), b=r(100,300), c=r(50,200); return {type:'solve', q:'图书馆原有 ' + a + ' 本书，借出 ' + b + ' 本，又还回 ' + c + ' 本，现在有（　　）本。', ans:a-b+c, explain:'原有 - 借出 + 还回'}; },
+      ()=>{ return {type:'judge', q:'加减混合运算要从左往右依次计算。（　　）', ans:'对', explain:'没有括号时从左到右'}; },
+      ()=>{ return {type:'choice', q:'最大的三位数与最小的三位数相加，和是（　　）。', options:['1099','999','1000'], ans:'1099', explain:'最大 999，最小 100，999+100=1099'}; },
+      ()=>{ return {type:'fill', q:'估算：996 + 498 ≈（　　）', ans:1500, explain:'996≈1000，498≈500'}; }
+    ],
     4: [
-        ()=>{ const a=r(2,9), b=r(2,6); return {type:'solve', q:'小明有 '+a+' 颗糖，小红的糖是小明的 '+b+' 倍，小红有（　　）颗。', ans:a*b, explain:'求几倍是多少用乘法'}; },
-        ()=>{ const a=r(3,9), b=a*r(2,4); return {type:'solve', q:'苹果有 '+b+' 个，梨有 '+a+' 个，苹果的个数是梨的（　　）倍。', ans:b/a, explain:'求一个数是另一个数的几倍用除法'}; },
-        ()=>{ const a=r(2,8), b=r(2,5); return {type:'judge', q:'求一个数的几倍是多少，用乘法计算。（　　）', ans:'对', explain:'几倍问题用乘法'}; },
-        ()=>{ const a=r(2,6), b=r(3,7); return {type:'fill', q:a+' 的 '+b+' 倍是（　　）。', ans:a*b, explain:'用乘法'}; }
-      ],
+      ()=>{ const a=r(2,9), b=r(2,9); return {type:'fill', q:a+' 的 ' + b + ' 倍是（　　）', ans:a*b, explain:'求倍数用乘法'}; },
+      ()=>{ const a=r(4,18), b=r(2,6); return {type:'fill', q:a+' 是 ' + b + ' 的（　　）倍', ans:Math.floor(a/b), explain:'求倍数用除法'}; },
+      ()=>{ const a=r(3,9), b=r(2,5); return {type:'solve', q:'苹果有 ' + a + ' 个，梨的个数是苹果的 ' + b + ' 倍，梨有（　　）个。', ans:a*b, explain:'苹果个数 × 倍数'}; },
+      ()=>{ const a=r(6,10), b=r(3,5); return {type:'solve', q:'小明今年 ' + a + ' 岁，妈妈的岁数是他的 ' + b + ' 倍，妈妈今年（　　）岁。', ans:a*b, explain:'倍数关系用乘法'}; },
+      ()=>{ return {type:'choice', q:'求一个数的几倍是多少，用（　　）法计算。', options:['乘','除','加'], ans:'乘', explain:'几倍就是几个几相加'}; },
+      ()=>{ return {type:'judge', q:'8 是 2 的 4 倍，因为 2×4=8。（　　）', ans:'对', explain:'求倍数用除法验证 8÷2=4'}; },
+      ()=>{ const a=r(3,8), b=r(2,4); return {type:'fill', q:'● 有 ' + a + ' 个，○ 的个数是 ● 的 ' + b + ' 倍，○ 有（　　）个', ans:a*b, explain:'画一画，几个几'}; },
+      ()=>{ const a=r(5,12), b=r(2,4), c=r(1,4); return {type:'solve', q:'红花有 ' + a + ' 朵，黄花的朵数是红花的 ' + b + ' 倍少 ' + c + ' 朵，黄花有（　　）朵。', ans:a*b-c, explain:'先算倍数再减去少的'}; }
+    ],
     5: [
-        ()=>{ const a=r(2,9), b=r(11,99); return {type:'calc', q:'口算： '+a+' × '+b+' = ', ans:a*b, explain:'多位数乘一位数，从个位乘起'}; },
-        ()=>{ const a=r(12,98), b=r(2,9); return {type:'calc', q:'计算： '+a+' × '+b+' = ', ans:a*b, explain:'从个位乘起，哪一位满几十就向前一位进几'}; },
-        ()=>{ const a=r(3,9), p=r(10,20), b=a*p; return {type:'solve', q:'每盒有 '+p+' 块糖，'+a+' 盒一共有（　　）块。', ans:b, explain:'求几个相同加数用乘法'}; },
-        ()=>{ return {type:'judge', q:'0 乘任何数都得 0。（　　）', ans:'对', explain:'0 和任何数相乘都是 0'}; }
-      ],
+      ()=>{ const a=r(12,98), b=r(2,9); return {type:'calc', q:a+' × '+b+' = ', ans:a*b, explain:'多位数乘一位数，从个位乘起'}; },
+      ()=>{ const a=r(123,987), b=r(2,9); return {type:'calc', q:a+' × '+b+' = ', ans:a*b, explain:'哪一位乘得满几十就向前一位进几'}; },
+      ()=>{ return {type:'fill', q:'0 乘任何数都得（　　）', ans:0, explain:'0 和任何数相乘都是 0'}; },
+      ()=>{ const a=r(6,12), b=r(3,9); return {type:'solve', q:'每盒有 ' + a + ' 块糖，' + b + ' 盒一共有（　　）块糖。', ans:a*b, explain:'每份数 × 份数'}; },
+      ()=>{ return {type:'choice', q:'笔算多位数乘一位数，从（　　）位乘起。', options:['个','十','百'], ans:'个', explain:'从个位乘起，依次往前'}; },
+      ()=>{ return {type:'judge', q:'两个数相乘，积一定比每个因数都大。（　　）', ans:'错', explain:'乘 0 或乘 1 时积不一定更大'}; },
+      ()=>{ const a=r(8,20), b=r(3,7); return {type:'solve', q:'小红每天看 ' + a + ' 页书，' + b + ' 天一共看了（　　）页。', ans:a*b, explain:'每天看的 × 天数'}; },
+      ()=>{ return {type:'fill', q:'估算：298 × 3 ≈（　　）', ans:900, explain:'298≈300，300×3=900'}; }
+    ],
     6: [
-        ()=>{ const a=r(3,12), b=r(2,9); return {type:'calc', q:'一个长方形长 '+a+' cm、宽 '+b+' cm，周长是多少 cm？', ans:2*(a+b), explain:'长方形周长 = (长+宽)×2'}; },
-        ()=>{ const a=r(3,12); return {type:'calc', q:'一个正方形边长 '+a+' cm，周长是多少 cm？', ans:4*a, explain:'正方形周长 = 边长×4'}; },
-        ()=>{ const a=r(4,10); return {type:'solve', q:'给边长 '+a+' dm 的正方形花坛围篱笆，至少需要（　　）dm 篱笆。', ans:4*a, explain:'周长就是篱笆的长度'}; },
-        ()=>{ return {type:'choice', q:'长方形的周长等于（　　）。', options:['(长+宽)×2','(长+宽)×4','长×宽'], ans:'(长+宽)×2', correct:0, explain:'长方形有两条长和两条宽'}; }
-      ],
+      ()=>{ return {type:'fill', q:'长方形的周长 =（长 + 宽）×（　　）', ans:2, explain:'长方形两条长两条宽'}; },
+      ()=>{ const a=r(5,20), b=r(3,15); return {type:'calc', q:'一个长方形长 ' + a + ' 厘米、宽 ' + b + ' 厘米，周长是（　　）厘米。', ans:(a+b)*2, explain:'(长+宽)×2'}; },
+      ()=>{ const a=r(4,15); return {type:'calc', q:'一个正方形边长是 ' + a + ' 厘米，周长是（　　）厘米。', ans:a*4, explain:'正方形周长 = 边长 × 4'}; },
+      ()=>{ const a=r(6,12); return {type:'solve', q:'一块正方形手帕边长 ' + a + ' 厘米，它的周长是（　　）厘米。', ans:a*4, explain:'四条边相等'}; },
+      ()=>{ return {type:'choice', q:'长方形的周长公式是（　　）。', options:['（长+宽）×2','长×宽','长+宽'], ans:'（长+宽）×2', explain:'长方形有两组对边'}; },
+      ()=>{ return {type:'judge', q:'正方形是特殊的长方形。（　　）', ans:'对', explain:'正方形四边相等、四个直角'}; },
+      ()=>{ const a=r(8,15), b=r(4,10); return {type:'solve', q:'一个长方形花坛长 ' + a + ' 米、宽 ' + b + ' 米，绕它走一圈要（　　）米。', ans:(a+b)*2, explain:'绕一周就是求周长'}; },
+      ()=>{ const a=r(5,12); return {type:'fill', q:'两个边长是 ' + a + ' 厘米的正方形拼成一个长方形，长方形的长是 ' + (a*2) + ' 厘米、宽 ' + a + ' 厘米，拼成后的周长是（　　）厘米。', ans:(a*2+a)*2, explain:'长=2a，宽=a'}; }
+    ],
     7: [
-        ()=>{ const a=r(2,9); return {type:'fill', q:'把一个蛋糕平均分成 '+a+' 份，每份是它的（　　）分之一。', ans:'1/'+a, explain:'平均分成几份，每份就是几分之一'}; },
-        ()=>{ const a=r(1,5), b=r(1,5); return {type:'calc', q:'\\frac{'+a+'}{8} + \\frac{'+b+'}{8} = ', ans:(a+b)+'/8', explain:'分母不变，分子相加，能约分的要约分'}; },
-        ()=>{ const a=r(2,9); return {type:'judge', q:'把一个圆平均分成 4 份，每份是它的四分之一。（　　）', ans:'对', explain:'平均分才叫几分之一'}; },
-        ()=>{ const a=r(2,9); return {type:'fill', q:a+' 个 \\frac{1}{5} 是（　　）。', ans:a+'/5', explain:'几个几分之一相加'}; }
-      ],
+      ()=>{ const a=r(2,9); return {type:'fill', q:'把一块蛋糕平均分成 ' + a + ' 份，每份是它的（　　）', ans:'1/'+a, explain:'平均分成几份，每份是几分之一'}; },
+      ()=>{ return {type:'choice', q:'下图中，阴影部分占整个圆的（　　）。', options:['1/3','1/2','1/4'], ans:'1/3', explain:'把一个圆平均分成 3 份取 1 份'}; },
+      ()=>{ return {type:'choice', q:'比 1/2 大的是（　　）。', options:['1/3','1/4','2/3'], ans:'2/3', explain:'分母相同比分子，2>1'}; },
+      ()=>{ const a=r(4,8), b=r(1,3); return {type:'solve', q:'一个披萨平均分成 ' + a + ' 份，明明吃了 ' + b + ' 份，还剩下几分之几？', ans:(a-b)+'/'+a, explain:'总数 - 吃了的'}; },
+      ()=>{ return {type:'judge', q:'分母越大，分数就越大。（　　）', ans:'错', explain:'分子相同比分母，分母越大分数越小'}; },
+      ()=>{ return {type:'fill', q:'1/4 + 1/4 =（　　）', ans:'2/4', explain:'分母相同，分子相加'}; },
+      ()=>{ return {type:'fill', q:'3/5 里面有（　　）个 1/5', ans:3, explain:'分子表示有这样的几份'}; },
+      ()=>{ return {type:'choice', q:'下面分数中最小的是（　　）。', options:['1/8','1/3','1/5'], ans:'1/8', explain:'分的份数越多，每份越小'}; }
+    ],
     8: [
-        ()=>{ const a=r(8,20), b=r(5,15), c=r(2,Math.min(a,b)); return {type:'solve', q:'三（1）班参加跳绳的有 '+a+' 人，参加跑步的有 '+b+' 人，两项都参加的有 '+c+' 人，至少参加一项的有（　　）人。', ans:a+b-c, explain:'总人数 = 跳绳 + 跑步 - 两项都参加'}; },
-        ()=>{ return {type:'choice', q:'解决重叠问题常用（　　）帮忙。', options:['集合图（韦恩图）','加法','减法'], ans:'集合图（韦恩图）', correct:0, explain:'用集合图能看清重复部分'}; },
-        ()=>{ const a=r(6,15), b=r(4,12), c=r(1,Math.min(a,b)); return {type:'solve', q:'喜欢苹果的有 '+a+' 人，喜欢香蕉的有 '+b+' 人，都喜欢的 '+c+' 人，一共（　　）人。', ans:a+b-c, explain:'加起来再减去重复'}; }
-      ]
+      ()=>{ const a=r(20,40), b=r(15,35), c=r(5,15); return {type:'solve', q:'三（1）班 ' + a + ' 人喜欢语文，' + b + ' 人喜欢数学，两种都喜欢的 ' + c + ' 人，至少喜欢一种的有（　　）人。', ans:a+b-c, explain:'喜欢语文 + 喜欢数学 - 都喜欢的'}; },
+      ()=>{ const a=r(15,30), b=r(12,28), c=r(4,12); return {type:'solve', q:'参加跳绳的 ' + a + ' 人，参加踢毽的 ' + b + ' 人，两项都参加的 ' + c + ' 人，参加活动的共（　　）人。', ans:a+b-c, explain:'容斥原理：总和减去重叠'}; },
+      ()=>{ return {type:'choice', q:'解决两部分有重叠的问题，常用（　　）来帮忙。', options:['韦恩图','表格','数轴'], ans:'韦恩图', explain:'韦恩图能清楚看出重叠部分'}; },
+      ()=>{ return {type:'judge', q:'两部分有重叠时，总数 = 两部分之和 - 重叠部分。（　　）', ans:'对', explain:'避免重复计算重叠的人'}; },
+      ()=>{ const a=r(20,40), b=r(15,30), c=r(5,12); return {type:'fill', q:'左圈有 ' + a + ' 个，右圈有 ' + b + ' 个，重叠 ' + c + ' 个，一共（　　）个。', ans:a+b-c, explain:'集合的并集'}; },
+      ()=>{ const a=r(10,20), b=r(8,16), c=r(3,8); return {type:'solve', q:'水果摊有 ' + a + ' 种苹果、' + b + ' 种梨，苹果和梨都卖的有 ' + c + ' 种，一共卖（　　）种水果。', ans:a+b-c, explain:'两种集合的合并'}; },
+      ()=>{ return {type:'choice', q:'三（2）班 ' + 'a' + ' 人选语文、' + 'b' + ' 人选数学、都选的 ' + 'c' + ' 人，选了至少一门的有（　　）人。', options:['a+b-c','a+b+c','a×b'], ans:'a+b-c', explain:'标准容斥公式'}; },
+      ()=>{ return {type:'judge', q:'用集合图（韦恩图）能帮我们理清数量之间的关系。（　　）', ans:'对', explain:'图能直观看到重叠'}; }
+    ]
   },
   1: {
     0: [
-        ()=>{ return {type:'choice', q:'早晨，太阳从（　　）方升起。', options:['东','西','南'], ans:'东', correct:0, explain:'早晨太阳在东边'}; },
-        ()=>{ return {type:'choice', q:'傍晚，太阳从（　　）方落下。', options:['东','西','北'], ans:'西', correct:1, explain:'傍晚太阳在西边'}; },
-        ()=>{ return {type:'judge', q:'地图上通常是上北下南、左西右东。（　　）', ans:'对', explain:'这是看地图的方向规则'}; },
-        ()=>{ return {type:'choice', q:'旗杆的影子在北方，说明太阳在（　　）方。', options:['南','北','东'], ans:'南', correct:0, explain:'影子方向与太阳相反'}; }
-      ],
+      ()=>{ return {type:'choice', q:'早晨，太阳从（　　）方升起。', options:['东','西','南','北'], ans:'东', explain:'太阳东升西落'}; },
+      ()=>{ return {type:'choice', q:'面向北站着，你的后面是（　　）方。', options:['南','东','西'], ans:'南', explain:'南北相对'}; },
+      ()=>{ return {type:'solve', q:'小明面向东，向左转一次，他现在面向（　　）方。', ans:'北', explain:'面向东左转是北'}; },
+      ()=>{ return {type:'judge', q:'地图通常是按“上北下南、左西右东”绘制的。（　　）', ans:'对', explain:'这是地图默认方向规则'}; },
+      ()=>{ return {type:'choice', q:'旗杆的影子偏向北方，说明太阳在（　　）方。', options:['南','北','东'], ans:'南', explain:'影子方向与太阳相反'}; },
+      ()=>{ return {type:'fill', q:'夜晚，北极星所在的的方向是（　　）方。', ans:'北', explain:'北极星在正北'}; },
+      ()=>{ const a=r(50,200), b=r(30,150); return {type:'solve', q:'从学校向东走 ' + a + ' 米到书店，再向南走 ' + b + ' 米到公园，从学校到公园要先向（　　）走再向（　　）走。', ans:'东 / 南', explain:'描述路线用方向词'}; },
+      ()=>{ return {type:'choice', q:'傍晚，太阳从（　　）边落下。', options:['西','东','南'], ans:'西', explain:'太阳西落'}; }
+    ],
     1: [
-        ()=>{ const b=r(2,9), q=r(11,99), a=b*q; return {type:'calc', q:'计算： '+a+' ÷ '+b+' = ', ans:q, explain:'想 '+b+' × '+q+' = '+a+'，从高位除起'}; },
-        ()=>{ const b=r(2,9), q=r(12,98), a=b*q; return {type:'calc', q:'计算： '+a+' ÷ '+b+' = ', ans:q, explain:'从高位除起，余数要比除数小'}; },
-        ()=>{ const b=r(2,9), q=r(10,40), a=b*q; return {type:'solve', q:'把 '+a+' 块糖平均分给 '+b+' 个小朋友，每人（　　）块。', ans:q, explain:'平均分用除法'}; },
-        ()=>{ return {type:'judge', q:'除法算完后，余数一定比除数小。（　　）', ans:'对', explain:'余数比除数小才正确'}; }
-      ],
+      ()=>{ const a=r(40,90), b=r(2,9); return {type:'calc', q:a+' ÷ '+b+' = ', ans:Math.floor(a/b), explain:'从最高位除起'}; },
+      ()=>{ const a=r(50,99), b=r(4,8); return {type:'calc', q:a+' ÷ '+b+' = ', ans:Math.floor(a/b), explain:'有余数的除法，余数要比除数小'}; },
+      ()=>{ return {type:'fill', q:'0 除以任何不是 0 的数，都得（　　）', ans:0, explain:'0 作被除数时商为 0'}; },
+      ()=>{ const a=r(24,96), b=r(3,8); return {type:'solve', q:'把 ' + a + ' 个苹果平均分给 ' + b + ' 个小朋友，每人分（　　）个。', ans:Math.floor(a/b), explain:'总数 ÷ 人数'}; },
+      ()=>{ return {type:'choice', q:'笔算除法时，要从（　　）位除起。', options:['最高','最低','中间'], ans:'最高', explain:'从最高位开始除'}; },
+      ()=>{ return {type:'judge', q:'在有余数的除法里，余数要比除数小。（　　）', ans:'对', explain:'余数小于除数'}; },
+      ()=>{ const a=r(30,90), b=r(4,9); return {type:'solve', q:'有 ' + a + ' 本练习本，每 ' + b + ' 本包成一包，可以包（　　）包，还剩（　　）本。', ans:Math.floor(a/b)+' 包 / '+(a%b)+' 本', explain:'带余数的除法'}; },
+      ()=>{ return {type:'fill', q:'验算除法：商 × 除数 +（　　）= 被除数', ans:'余数', explain:'除法验算公式'}; }
+    ],
     2: [
-        ()=>{ const a=r(5,20), b=r(5,20); return {type:'solve', q:'统计表显示男生 '+a+' 人、女生 '+b+' 人，全班共（　　）人。', ans:a+b, explain:'把两类人数相加'}; },
-        ()=>{ return {type:'choice', q:'把两张单式统计表合成一张，叫（　　）。', options:['复式统计表','条形图','饼图'], ans:'复式统计表', correct:0, explain:'能同时看多类数据'}; },
-        ()=>{ const a=r(3,10), b=r(3,10), c=r(3,10); return {type:'solve', q:'喜欢红、黄、蓝三种颜色的人数分别是 '+a+'、'+b+'、'+c+'，一共（　　）人。', ans:a+b+c, explain:'把各项加起来'}; }
-      ],
+      ()=>{ const a=r(15,30), b=r(15,30); return {type:'solve', q:'某班男生 ' + a + ' 人、女生 ' + b + ' 人，一共（　　）人。', ans:a+b, explain:'两部分人数相加'}; },
+      ()=>{ return {type:'choice', q:'复式统计表能同时比较（　　）组数据。', options:['两组或更多','一组','三组以上才行'], ans:'两组或更多', explain:'复式表可对比多类'}; },
+      ()=>{ return {type:'judge', q:'制作统计表时，要写清楚项目和对应的数量。（　　）', ans:'对', explain:'表和项目都要标清'}; },
+      ()=>{ const a=r(12,25), b=r(10,22); return {type:'fill', q:'第一组 ' + a + ' 人，第二组 ' + b + ' 人，合计（　　）人。', ans:a+b, explain:'合计 = 各组之和'}; },
+      ()=>{ const a=r(18,30), b=r(15,28); return {type:'solve', q:'三（1）班喜欢语文的 ' + a + ' 人、喜欢数学的 ' + b + ' 人（无人重复），共有（　　）人喜欢至少一门。', ans:a+b, explain:'无重叠直接相加'}; },
+      ()=>{ return {type:'choice', q:'用画“正”字的方法可以（　　）。', options:['记录数据','画图','写字'], ans:'记录数据', explain:'“正”字一笔代表一个数据'}; },
+      ()=>{ return {type:'judge', q:'统计能帮助我们发现数据中的规律。（　　）', ans:'对', explain:'统计的目的是分析'}; },
+      ()=>{ return {type:'fill', q:'统计表一般包含（　　）、项目和（　　）三部分。', ans:'表头 / 数据', explain:'统计表三要素'}; }
+    ],
     3: [
-        ()=>{ const a=r(12,39), b=r(11,29); return {type:'calc', q:'计算： '+a+' × '+b+' = ', ans:a*b, explain:'先用个位乘，再用十位乘，最后相加'}; },
-        ()=>{ const a=r(12,39), b=r(10,29); return {type:'calc', q:'口算： '+a+' × '+b+' = ', ans:a*b, explain:'拆分相乘再合并'}; },
-        ()=>{ const p=r(12,30), n=r(2,9), t=p*n; return {type:'solve', q:'每排坐 '+p+' 人，'+n+' 排一共（　　）人。', ans:t, explain:'求总数用乘法'}; },
-        ()=>{ return {type:'judge', q:'两位数乘两位数，积可能是三位数也可能是四位数。（　　）', ans:'对', explain:'如 10×10=100，99×99=9801'}; }
-      ],
+      ()=>{ const a=r(12,38), b=r(12,38); return {type:'calc', q:a+' × '+b+' = ', ans:a*b, explain:'两位数乘两位数，先用个位乘，再用十位乘'}; },
+      ()=>{ return {type:'fill', q:'估算：28 × 13 ≈（　　）', ans:300, explain:'28≈30，13≈10，30×10=300'}; },
+      ()=>{ const a=r(11,19), b=r(11,19); return {type:'solve', q:'每辆大巴坐 ' + a + ' 人，' + b + ' 辆车一共可坐（　　）人。', ans:a*b, explain:'每车人数 × 车数'}; },
+      ()=>{ return {type:'choice', q:'笔算两位数乘两位数，先用第二个因数的个位去乘，再用（　　）位去乘。', options:['十','百','个'], ans:'十', explain:'分别用个位、十位去乘'}; },
+      ()=>{ return {type:'judge', q:'25 × 40 的积的末尾有 3 个 0。（　　）', ans:'对', explain:'25×40=1000'}; },
+      ()=>{ const a=r(40,90), b=r(6,9); return {type:'solve', q:'一本书 ' + a + ' 页，' + b + ' 天看完，平均每天看（　　）页。', ans:Math.floor(a/b), explain:'总页数 ÷ 天数'}; },
+      ()=>{ return {type:'calc', q:'12 × 13 = ', ans:156, explain:'12×10=120，12×3=36，120+36=156'}; },
+      ()=>{ return {type:'fill', q:'估算：19 × 21 ≈（　　）', ans:400, explain:'19≈20，21≈20，20×20=400'}; }
+    ],
     4: [
-        ()=>{ const a=r(3,12), b=r(2,9); return {type:'calc', q:'长方形长 '+a+' cm、宽 '+b+' cm，面积是（　　）cm²。', ans:a*b, explain:'长方形面积 = 长×宽'}; },
-        ()=>{ const a=r(3,12); return {type:'calc', q:'正方形边长 '+a+' dm，面积是（　　）dm²。', ans:a*a, explain:'正方形面积 = 边长×边长'}; },
-        ()=>{ const a=r(100,900); return {type:'fill', q:a+' 平方厘米 =（　　）平方分米', ans:Math.floor(a/100), explain:'1 平方分米 = 100 平方厘米'}; },
-        ()=>{ return {type:'choice', q:'测量黑板表面的大小，用（　　）作单位合适。', options:['平方厘米','平方分米','平方米'], ans:'平方米', correct:2, explain:'较大的面用平方米'}; }
-      ],
+      ()=>{ const a=r(6,15), b=r(4,12); return {type:'calc', q:'长 ' + a + ' 厘米、宽 ' + b + ' 厘米的长方形，面积是（　　）平方厘米。', ans:a*b, explain:'长方形面积 = 长 × 宽'}; },
+      ()=>{ const a=r(5,13); return {type:'calc', q:'边长 ' + a + ' 厘米的正方形，面积是（　　）平方厘米。', ans:a*a, explain:'正方形面积 = 边长 × 边长'}; },
+      ()=>{ return {type:'fill', q:'常用的面积单位有平方厘米、（　　）和平方米。', ans:'平方分米', explain:'面积单位从小到大'}; },
+      ()=>{ return {type:'choice', q:'测量黑板面的面积，一般用（　　）作单位。', options:['平方米','平方厘米','平方分米'], ans:'平方米', explain:'黑板较大用平方米'}; },
+      ()=>{ return {type:'judge', q:'周长相等的两个长方形，面积也一定相等。（　　）', ans:'错', explain:'周长相等面积可以不同'}; },
+      ()=>{ const a=r(7,15), b=r(4,10); return {type:'solve', q:'一块长方形菜地长 ' + a + ' 米、宽 ' + b + ' 米，面积是（　　）平方米。', ans:a*b, explain:'长 × 宽'}; },
+      ()=>{ return {type:'fill', q:'1 平方米 =（　　）平方分米', ans:100, explain:'相邻面积单位进率 100'}; },
+      ()=>{ return {type:'choice', q:'一本数学课本的封面面积大约是（　　）。', options:['3 平方分米','3 平方厘米','3 平方米'], ans:'3 平方分米', explain:'课本封面用平方分米'}; }
+    ],
     5: [
-        ()=>{ return {type:'fill', q:'一年有（　　）个月', ans:12, explain:'一年有 12 个月'}; },
-        ()=>{ return {type:'judge', q:'平年二月有 28 天，闰年二月有 29 天。（　　）', ans:'对', explain:'平年 28 天，闰年 29 天'}; },
-        ()=>{ return {type:'choice', q:'下面月份中，天数是 30 天的是（　　）。', options:['四月','三月','一月'], ans:'四月', correct:0, explain:'四、六、九、十一月是 30 天'}; },
-        ()=>{ const a=r(1,11), d=r(1,3); return {type:'solve', q:'活动从 '+a+' 时开始，经过 '+d+' 小时结束，结束时刻是（　　）时。', ans:a+d, explain:'开始时刻加经过时间'}; }
-      ],
+      ()=>{ return {type:'fill', q:'一年有（　　）个月，其中大月有（　　）个。', ans:'12 / 7', explain:'1,3,5,7,8,10,12 是大月共 7 个'}; },
+      ()=>{ return {type:'fill', q:'平年的 2 月有（　　）天，闰年的 2 月有（　　）天。', ans:'28 / 29', explain:'闰年 2 月多 1 天'}; },
+      ()=>{ return {type:'choice', q:'下面哪个月是大月？（　　）', options:['1 月','4 月','9 月'], ans:'1 月', explain:'大月：1,3,5,7,8,10,12'}; },
+      ()=>{ return {type:'judge', q:'通常每 4 年里有 1 个闰年。（　　）', ans:'对', explain:'闰年规律：年份÷4 整除（整百年÷400）'}; },
+      ()=>{ return {type:'fill', q:'一天有（　　）小时，时针走（　　）圈。', ans:'24 / 2', explain:'时针一天转 2 圈'}; },
+      ()=>{ const a=r(9,16), b=r(10,18); return {type:'solve', q:'一部电影从 ' + a + ' 时开始，到 ' + b + ' 时结束，共放映（　　）小时。', ans:b-a, explain:'结束时刻 - 开始时刻'}; },
+      ()=>{ return {type:'choice', q:'21 时用普通计时法表示是（　　）。', options:['晚上 9 时','上午 9 时','晚上 11 时'], ans:'晚上 9 时', explain:'21-12=9，是晚上'}; },
+      ()=>{ return {type:'fill', q:'闰年全年有（　　）天，平年全年有（　　）天。', ans:'366 / 365', explain:'闰年多 1 天'}; }
+    ],
     6: [
-        ()=>{ return {type:'fill', q:'把 1 米平均分成 10 份，每份是（　　）米。', ans:'0.1', explain:'1 分米 = 0.1 米'}; },
-        ()=>{ return {type:'fill', q:'5 角 =（　　）元', ans:'0.5', explain:'1 元 = 10 角，5 角 = 0.5 元'}; },
-        ()=>{ const a=r(1,9); return {type:'calc', q:'计算： '+a+'.2 + 0.3 = ', ans:Number((a+0.5).toFixed(1)), explain:'小数点对齐，相同数位相加'}; },
-        ()=>{ return {type:'judge', q:'小数一定比整数小。（　　）', ans:'错', explain:'小数不一定比整数小，如 3.5 > 3'}; }
-      ],
+      ()=>{ return {type:'fill', q:'小数 3.5 读作（　　）', ans:'三点五', explain:'小数点左边读整数，右边依次读数字'}; },
+      ()=>{ return {type:'choice', q:'0.8 米 =（　　）分米', options:['8','80','800'], ans:'8', explain:'1 米=10 分米，0.8 米=8 分米'}; },
+      ()=>{ return {type:'choice', q:'比 0.5 大的是（　　）。', options:['0.3','0.4','0.7'], ans:'0.7', explain:'小数先比整数部分再比小数部分'}; },
+      ()=>{ const a=r(2,9), b=r(1,9); return {type:'fill', q:a+' 元 ' + b + ' 角 =（　　）元', ans:a+'.'+b, explain:'几元几角写成小数'}; },
+      ()=>{ return {type:'judge', q:'所有的小数都比 1 小。（　　）', ans:'错', explain:'如 1.5、2.3 都比 1 大'}; },
+      ()=>{ return {type:'fill', q:'1 米 =（　　）分米 =（　　）厘米，0.1 米 =（　　）分米', ans:'10 / 100 / 1', explain:'长度单位进率'}; },
+      ()=>{ return {type:'choice', q:'3 元 5 角写成小数是（　　）元。', options:['3.5','0.35','35'], ans:'3.5', explain:'5 角=0.5 元'}; },
+      ()=>{ return {type:'fill', q:'0.6 + 0.3 =（　　）', ans:0.9, explain:'小数加法，十分位相加'}; }
+    ],
     7: [
-        ()=>{ const a=r(2,4), b=r(2,4); return {type:'solve', q:'有 '+a+' 件上衣和 '+b+' 条裤子，一共可以搭配（　　）种穿法。', ans:a*b, explain:'每件上衣都能配每条裤子，用乘法'}; },
-        ()=>{ return {type:'choice', q:'从 3 个朋友中选 2 人拍照，有（　　）种选法。', options:['3','6','9'], ans:'3', correct:0, explain:'用连线法：AB、AC、BC 共 3 种'}; },
-        ()=>{ const a=r(2,5), b=r(2,5), c=r(1,3); return {type:'solve', q:'早餐有 '+a+' 种主食、'+b+' 种饮品、'+c+' 种点心，各选一种共有（　　）种搭配。', ans:a*b*c, explain:'分步用乘法'}; }
-      ],
+      ()=>{ const a=r(2,5), b=r(2,4); return {type:'solve', q:'有 ' + a + ' 件上衣、' + b + ' 条裤子，一共有（　　）种不同的穿法。', ans:a*b, explain:'每件上衣都能配每条裤子'}; },
+      ()=>{ return {type:'solve', q:'用数字 1、2、3 能组成（　　）个没有重复数字的两位数。', ans:6, explain:'3×2=6 个：12,13,21,23,31,32'}; },
+      ()=>{ const a=r(2,5), b=r(2,4); return {type:'choice', q:'早餐有 ' + a + ' 种主食、' + b + ' 种饮料，一种主食配一种饮料有（　　）种搭配。', options:[a*b+' 种',(a+b)+' 种',a+' 种'], ans:a*b+' 种', explain:'搭配数 = 主食数 × 饮料数'}; },
+      ()=>{ return {type:'judge', q:'搭配问题可以用连线或乘法来计算。（　　）', ans:'对', explain:'乘法原理'}; },
+      ()=>{ return {type:'solve', q:'从 4 个数字中选 2 个排成一排（不重复），有（　　）种排法。', ans:12, explain:'4×3=12 种排列'}; },
+      ()=>{ return {type:'fill', q:'从 3 种水果中任选 2 种，有（　　）种选法。', ans:3, explain:'组合：3 选 2 = 3 种'}; },
+      ()=>{ return {type:'choice', q:'一个两位密码锁，每位可以是 0~9，一共（　　）种密码。', options:['100','20','10'], ans:'100', explain:'10×10=100'}; },
+      ()=>{ return {type:'judge', q:'排列与顺序有关，组合与顺序无关。（　　）', ans:'对', explain:'这是排列与组合的区别'}; }
+    ],
     8: [
-        ()=>{ const a=r(100,9000), b=r(100,9000); const big=Math.max(a,b), sm=Math.min(a,b); return {type:'calc', q:'计算： '+big+' + '+sm+' = ', ans:big+sm, explain:'万以内加减，数位对齐'}; },
-        ()=>{ const b=r(2,9), q=r(11,99), a=b*q; return {type:'calc', q:'计算： '+a+' ÷ '+b+' = ', ans:q, explain:'除数是一位数的除法，从高位除起'}; },
-        ()=>{ const a=r(3,12), b=r(2,9); return {type:'calc', q:'长方形周长：长 '+a+' cm、宽 '+b+' cm，周长（　　）cm。', ans:2*(a+b), explain:'周长=(长+宽)×2'}; },
-        ()=>{ return {type:'judge', q:'期末复习要把全册知识整理成网络。（　　）', ans:'对', explain:'系统复习更有效'}; }
-      ]
+      ()=>{ const a=r(12,38), b=r(2,9), c=r(10,40); return {type:'calc', q:a+' × '+b+' + '+c+' = ', ans:a*b+c, explain:'先乘后加'}; },
+      ()=>{ const a=r(2,6), b=r(3,9), c=r(1,5), d=r(2,8); return {type:'solve', q:'买 ' + a + ' 个 ' + b + ' 元的文具盒和 ' + c + ' 支 ' + d + ' 元的笔，一共花（　　）元。', ans:a*b+c*d, explain:'分别算再相加'}; },
+      ()=>{ return {type:'choice', q:'在没有括号的算式里，应该先算（　　）。', options:['乘除法','加减法','从左到右'], ans:'乘除法', explain:'先乘除后加减'}; },
+      ()=>{ return {type:'judge', q:'算式里有括号时，要先算括号里面的。（　　）', ans:'对', explain:'括号优先'}; },
+      ()=>{ return {type:'fill', q:'25 + 15 × 2 =（　　）', ans:55, explain:'先算 15×2=30，再 25+30=55'}; },
+      ()=>{ const a=r(7,15), b=r(4,10); return {type:'solve', q:'一个长方形长 ' + a + ' 米、宽 ' + b + ' 米，它的周长是（　　）米，面积是（　　）平方米。', ans:(a+b)*2+' / '+(a*b), explain:'周长=(长+宽)×2，面积=长×宽'}; },
+      ()=>{ return {type:'fill', q:'估算：19 × 21 ≈（　　）', ans:400, explain:'四舍五入估算'}; },
+      ()=>{ return {type:'judge', q:'做题时认真检查，可以减少错误。（　　）', ans:'对', explain:'检查很重要'}; }
+    ]
   }
 };
 
