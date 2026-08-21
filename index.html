@@ -38,8 +38,8 @@
       --sidebar-bg: #ff9ec4;
       --sidebar-active: #ff6b9d;
       --sidebar-hover: #ff85a7;
-      --sidebar-text: rgba(255,255,255,0.95);
-      --sidebar-text-active: #fff;
+      --sidebar-text: #4a2350;
+      --sidebar-text-active: #5e2b6b;
       --bg: #f8f4fc;
       --card: #ffffff;
       --card-shadow: 0 8px 30px rgba(120, 80, 140, 0.07);
@@ -232,7 +232,7 @@
 
     .drawer {
       position:fixed; left:0; top:0; bottom:0; width:260px;
-      background: var(--drawer-bg); color:#fff; z-index:110;
+      background: var(--drawer-bg); color:#4a2350; z-index:110;
       display:flex; flex-direction:column;
       transform:translateX(-100%); transition:transform .32s cubic-bezier(0.25,0.46,0.45,0.94);
       box-shadow:8px 0 32px rgba(0,0,0,0.18);
@@ -247,7 +247,7 @@
     .drawer-overlay.open { opacity:1; pointer-events:auto; }
     .drawer-brand {
       padding:22px 18px 18px; display:flex; align-items:center; gap:12px;
-      border-bottom:1px solid rgba(255,255,255,0.1);
+      border-bottom:1px solid rgba(74,35,80,0.18);
     }
     .drawer-brand .logo {
       width:44px; height:44px; border-radius:14px; background:linear-gradient(135deg,#60a5fa,#34d399);
@@ -255,15 +255,15 @@
       box-shadow:0 4px 14px rgba(0,0,0,0.18);
     }
     .drawer-brand .title { font-size:16px; font-weight:700; line-height:1.3; }
-    .drawer-brand .title span { display:block; font-size:12px; color:rgba(255,255,255,0.65); font-weight:400; }
+    .drawer-brand .title span { display:block; font-size:12px; color:rgba(74,35,80,0.8); font-weight:400; }
     .drawer-nav { flex:1; overflow-y:auto; padding:14px 12px; }
     .drawer-nav .nav-item {
       display:flex; align-items:center; gap:12px; padding:12px 14px; margin-bottom:6px;
-      border-radius:var(--radius-sm); color:rgba(255,255,255,0.85); cursor:pointer;
+      border-radius:var(--radius-sm); color:#4a2350; cursor:pointer;
       transition:all .2s; font-size:15px;
     }
-    .drawer-nav .nav-item:hover { background:rgba(255,255,255,0.1); color:#fff; }
-    .drawer-nav .nav-item.active { background:#fff; color:var(--sidebar-bg); box-shadow:0 4px 12px rgba(0,0,0,0.12); font-weight:600; }
+    .drawer-nav .nav-item:hover { background:rgba(255,255,255,0.45); color:#3a1a4a; }
+    .drawer-nav .nav-item.active { background:#fff; color:#5e2b6b; box-shadow:0 4px 12px rgba(0,0,0,0.12); font-weight:600; }
     .drawer-nav .nav-item svg { width:22px; height:22px; flex-shrink:0; }
 
     /* nav-pills 已删除：底部 Tab 改为左侧汉堡 → .drawer-nav，释放顶部留白 */
