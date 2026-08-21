@@ -3,7 +3,7 @@
  * 更新策略：网络优先（network-first）+ 兜底缓存。每次都去网络问最新版本，
  *          拿到后写入缓存；离线时才用缓存。这样保证用户看到的一直是新版。
  */
-const CACHE = 'syx-pwa-v19';
+const CACHE = 'syx-pwa-v20';
 const ASSETS = [
   './',
   './index.html',
