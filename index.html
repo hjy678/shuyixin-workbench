@@ -913,7 +913,15 @@
     .home-info-row.last .home-info-tip { max-width:62%; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; color:#7b78ef; font-weight:600; }
     .home-mod-go { display:block; width:100%; margin-top:12px; padding:10px 0; border:none; border-radius:14px; cursor:pointer; background:linear-gradient(135deg,#e81f80,#7b78ef); color:#fff; font-size:14px; font-weight:700; letter-spacing:1px; box-shadow:0 4px 12px rgba(123,120,239,.30); transition:.2s; }
     .home-mod-go:hover { transform:translateY(-1px); box-shadow:0 6px 18px rgba(123,120,239,.45); }
-  </style>
+      /* ===== 月考密卷（V1.5） ===== */
+    .monthly-sec-title { font-size:15px; font-weight:700; color:var(--pink); margin:14px 0 8px; padding-left:10px; border-left:4px solid var(--pink); }
+    .monthly-fig { margin:8px 0; text-align:center; }
+    .monthly-fig svg { max-width:100%; height:auto; background:#fff; border-radius:10px; padding:8px; box-shadow:0 2px 8px rgba(0,0,0,.06); }
+    .monthly-passage { background:#f4f6fb; border-left:4px solid var(--purple,#7c4dff); padding:10px 12px; border-radius:8px; margin:6px 0 10px; font-size:14px; line-height:1.7; color:#222; }
+    .q-score { margin-left:auto; font-size:12px; color:#999; font-weight:600; white-space:nowrap; }
+    .q-pill { display:inline-block; padding:1px 8px; border-radius:10px; font-size:11px; font-weight:600; white-space:nowrap; }
+
+</style>
 </head>
 <body>
   <div id="errbanner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:99999;background:#ef4444;color:#fff;padding:10px 16px;font-size:14px;font-weight:600;box-shadow:0 4px 12px rgba(0,0,0,.3);"></div>
@@ -963,10 +971,11 @@
       {id:'think', name:'思辨', icon:'💡', hero:'hero-think', color:'var(--purple)', light:'var(--purple-light)'},
       {id:'mind', name:'导图', icon:'🧠', hero:'hero-mind', color:'var(--teal)', light:'var(--teal-light)'},
       {id:'xiaoshengchu', name:'期末冲刺', icon:'📝', hero:'hero-math', color:'var(--pink)', light:'var(--pink-light)'},
+      {id:'monthly', name:'月考密卷', icon:'📅', hero:'hero-math', color:'var(--pink)', light:'var(--pink-light)'},
     ];
 
     const STORAGE_KEY = 'syx-g3-workbench-v1';
-    const APP_VERSION = '2026-08-22-v14-quiz-figure'; // V1.4 题库教辅化扩量：readingDB 51/经典阅读80/数学生成器2727(含1296图形题)
+    const APP_VERSION = '2026-08-24-v15-monthly'; // V1.5 月考密卷：进度同步密卷（数学结构化100分含数形结合/语文/英语/综合），参照人教版期中期末卷
 
     /* 全局错误可视化：任何未捕获的报错都会显示在页面顶部红条，便于排查 */
     function showErr(msg) {
@@ -3094,7 +3103,7 @@ function genChinesePractice(path) {
         {id:'t4', text:'观察今天的天气并记录', subject:'science', duration:'10分钟', done:false},
       ],
       checkin: {},
-      progress: {chinese:0, math:0, english:0, pe:0, reading:0, science:0, labor:0, errorbook:0, think:0, mind:0, xiaoshengchu:0},
+      progress: {chinese:0, math:0, english:0, pe:0, reading:0, science:0, labor:0, errorbook:0, think:0, mind:0, xiaoshengchu:0, monthly:0},
       selectedLesson: {
         chinese:{semester:0, unit:0, lesson:0},
         math:{semester:0, unit:0, lesson:0},
@@ -3142,6 +3151,7 @@ function genChinesePractice(path) {
       mindSubject: 'math',
       mindOpen: {},
       xiaoshengchu: { mode:'mixed', q:null, done:0, correct:0, sim:null },
+      monthly: { month:'11', subject:'math', paper:null, submitted:false },
       readOutputs: [],
       notes: ''
     });
@@ -3215,7 +3225,7 @@ function genChinesePractice(path) {
             });
           }
           S = deepMerge(defaultState(), parsed);
-          const validPages = ['home','chinese','math','english','pe','reading','science','labor','reward','errorbook','xiaoshengchu'];
+          const validPages = ['home','chinese','math','english','pe','reading','science','labor','reward','errorbook','xiaoshengchu','monthly'];
           if (!validPages.includes(S.current)) S.current = 'home';
         }
       } catch(e) { console.error('load error', e); S = defaultState(); }
@@ -3333,8 +3343,8 @@ function genChinesePractice(path) {
         labor:'<path d="M3 6h18M3 12h18M3 18h18"/>',
         reward:'<path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6M18 9h1.5a2.5 2.5 0 0 0 0-5H18M4 22h16M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/><path d="M12 14h.01M12 2v8"/>',
         errorbook:'<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>',
-        xiaoshengchu:'<path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/>'
-      };
+        xiaoshengchu:'<path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 0 0-2.91-.09z"/><path d="M12 15l-3-3a22 22 0 0 1 2-3.95A12.88 12.88 0 0 1 22 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 0 1-4 2z"/><path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/>',
+        monthly:'<rect x=\"3\" y=\"4\" width=\"18\" height=\"18\" rx=\"2\"/><line x1=\"3\" y1=\"9\" x2=\"21\" y2=\"9\"/><line x1=\"8\" y1=\"2\" x2=\"8\" y2=\"6\"/><line x1=\"16\" y1=\"2\" x2=\"16\" y2=\"6\"/>'      };
       return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${map[name]||map.home}</svg>`;
     }
 
@@ -3435,7 +3445,7 @@ function genChinesePractice(path) {
       const checked = isTodayCheckedIn();
       const homeSubs = subjects.filter(s=>s.id!=='home'&&s.id!=='reward');
       const doneSubs = homeSubs.filter(s=>(S.progress[s.id]||0)>=100).length;
-      const subDesc = {chinese:'古诗·课文·生字积累', math:'计算·思维·奥数', english:'听读·口语训练', pe:'运动·健康', reading:'整本阅读', science:'实验·探究', labor:'动手·生活', errorbook:'错题回顾', reward:'星星兑换', think:'逻辑·思辨', mind:'导图·联网', xiaoshengchu:'期末冲刺'};
+      const subDesc = {chinese:'古诗·课文·生字积累', math:'计算·思维·奥数', english:'听读·口语训练', pe:'运动·健康', reading:'整本阅读', science:'实验·探究', labor:'动手·生活', errorbook:'错题回顾', reward:'星星兑换', think:'逻辑·思辨', mind:'导图·联网', xiaoshengchu:'期末冲刺', monthly:'月考密卷·进度同步'};
       return `
         <div class="content">
           <div class="greet">
@@ -5118,6 +5128,207 @@ function genChinesePractice(path) {
       return html;
     }
 
+/* ===================== 月考密卷模块（V1.5） ===================== */
+// 教学进度对齐：每月月考覆盖的单元（人教版三年级上下册）
+// 参考：飞燕 IMA 知识库《人教版 期中/期末拔尖测试卷》+ 网上真实月考试卷结构（填空/判断/选择/计算/应用，满分100）
+const MONTH_PLAN = {
+  '9':  {label:'9月·第一次月考', sem:0, units:[0,1]},
+  '10': {label:'10月·第二次月考', sem:0, units:[2,3]},
+  '11': {label:'11月·第三次月考', sem:0, units:[4,5]},
+  '12': {label:'12月·第四次月考', sem:0, units:[6,7]},
+  '3':  {label:'3月·第一次月考', sem:1, units:[0,1]},
+  '4':  {label:'4月·第二次月考', sem:1, units:[2,3]},
+  '5':  {label:'5月·第三次月考', sem:1, units:[4,5]},
+};
+const MONTH_ORDER = ['9','10','11','12','3','4','5'];
+
+function subjName(id){ return {math:'数学',chinese:'语文',english:'英语',mixed:'综合'}[id]||id; }
+function subjColor(name){ return name==='数学'?'var(--orange-light)':name==='语文'?'var(--pink-light)':'var(--purple-light)'; }
+
+// 按单元采样数学生成器，返回生成后的题目对象数组（已洗牌、去重）
+function monthlyMathItems(sem, units, types) {
+  const out = []; const seen = new Set();
+  const us = examMathPool[sem]; if (!us) return out;
+  units.forEach(u => {
+    const gens = us[u] || [];
+    gens.forEach(g => {
+      for (let k=0;k<5;k++){ try {
+        const it = g();
+        if (!it || it.q==null || it.ans===undefined) continue;
+        if (types && types.indexOf(it.type)<0) continue;
+        const key = it.type+'|'+it.q+'|'+String(it.ans);
+        if (seen.has(key)) continue; seen.add(key);
+        out.push(it);
+      } catch(e){} }
+    });
+  });
+  return shuffle(out);
+}
+function mkMathQ(it, section, score) {
+  const q = {subject:'数学', section, score, q:it.q, explain:it.explain||'', svg:it.svg||'', sel:-1, checked:false, fillVal:''};
+  if (it.type==='judge') { q.type='choice'; q.options=['对','错']; q.ans=String(it.ans); }
+  else if (it.type==='choice') { q.type='choice'; q.options=it.options.map(String); q.ans=String(it.ans); }
+  else { q.type='fill'; q.options=null; q.ans=String(it.ans).trim(); }
+  return q;
+}
+function genMathMonthlyPaper(sem, units) {
+  const paper = [];
+  monthlyMathItems(sem, units, ['fill']).slice(0,10).forEach(it=>paper.push(mkMathQ(it,'一、填空题',2)));
+  monthlyMathItems(sem, units, ['judge']).slice(0,5).forEach(it=>paper.push(mkMathQ(it,'二、判断题',2)));
+  monthlyMathItems(sem, units, ['choice']).slice(0,5).forEach(it=>paper.push(mkMathQ(it,'三、选择题',3)));
+  monthlyMathItems(sem, units, ['calc','figure']).slice(0,10).forEach(it=>paper.push(mkMathQ(it,'四、计算题',3)));
+  // 应用：优先数形结合图形题，其余为解决问题
+  const app = monthlyMathItems(sem, units, ['figure','solve']);
+  const figs = app.filter(x=>x.type==='figure'); const solvs = app.filter(x=>x.type==='solve');
+  figs.concat(solvs).slice(0,5).forEach(it=>paper.push(mkMathQ(it,'五、解决问题',5)));
+  return paper;
+}
+
+// 语文：基础（genChinesePractice 按学期）+ 阅读理解（readingDB 按学期）
+function monthlyPickChinese(sem) {
+  const u = rand(0, curriculum.chinese.semesters[sem].units.length-1);
+  const li = rand(0, curriculum.chinese.semesters[sem].units[u].lessons.length-1);
+  const lp = { sel:{semester:sem,unit:u,lesson:li}, semester:curriculum.chinese.semesters[sem], unit:curriculum.chinese.semesters[sem].units[u], lesson:curriculum.chinese.semesters[sem].units[u].lessons[li] };
+  const arr = genChinesePractice(lp);
+  if (!arr || !arr.length) return null;
+  const it = arr[rand(0, arr.length-1)];
+  return {subject:'语文', type:'choice', q:it.q, options:it.options.map(String), ans:String(it.options[it.correct]), explain:it.explain||'', passage:''};
+}
+function monthlyReadingItems(sem, n) {
+  const keys = Object.keys(readingDB).filter(k=>k.indexOf(sem+'-')===0);
+  shuffle(keys);
+  const out = [];
+  for (const k of keys) {
+    const entry = readingDB[k]; if(!entry||!entry.items) continue;
+    for (const art of entry.items) {
+      const qs = art.questions||[];
+      for (const q of qs) {
+        if (q.q && q.options && q.correct!=null) {
+          out.push({subject:'语文', type:'choice', q:q.q, options:q.options.map(String), ans:String(q.options[q.correct]), explain:'', passage:art.text||entry.text||'', section:'阅读理解', score:3, sel:-1, checked:false, fillVal:''});
+          if (out.length>=n) return out;
+        }
+      }
+    }
+  }
+  return out;
+}
+function monthlyPickEnglishNorm() {
+  const q = xscPickEnglish(); if(!q) return null;
+  q.section='英语综合'; return q;
+}
+
+function prepQ(q){
+  q.sel = (q.sel==null?-1:q.sel);
+  q.checked = false;
+  if(q.fillVal==null) q.fillVal='';
+  if(q.score==null) q.score=0;
+  if(!q.section) q.section='';
+  if(q.svg==null) q.svg='';
+  if(q.passage==null) q.passage='';
+  if(q.explain==null) q.explain='';
+  return q;
+}
+function normalizeScore(paper, total){
+  const n = paper.length; if(!n) return;
+  const base = Math.floor(total/n); let rem = total - base*n;
+  paper.forEach((q,i)=>{ q.score = base + (i<rem?1:0); });
+}
+
+function buildMonthlyPaper(subject, monthKey){
+  const plan = MONTH_PLAN[monthKey]; if(!plan) return [];
+  let paper = [];
+  if (subject==='math') {
+    paper = genMathMonthlyPaper(plan.sem, plan.units);
+  } else if (subject==='chinese') {
+    for (let i=0;i<15;i++){ const q=monthlyPickChinese(plan.sem); if(q){q.section='一、基础知识'; paper.push(q);} }
+    monthlyReadingItems(plan.sem, 10).forEach(q=>paper.push(q));
+  } else if (subject==='english') {
+    for (let i=0;i<25;i++){ const q=monthlyPickEnglishNorm(); if(q){q.section='英语综合'; paper.push(q);} }
+  } else { // 综合：数学 40% + 语文 30% + 英语 30%
+    const m = genMathMonthlyPaper(plan.sem, plan.units).slice(0,14);
+    const c = []; for (let i=0;i<10;i++){ const q=monthlyPickChinese(plan.sem); if(q){q.section='语文'; c.push(q);} }
+    monthlyReadingItems(plan.sem, 5).forEach(q=>c.push(q));
+    const e = []; for (let i=0;i<10;i++){ const q=monthlyPickEnglishNorm(); if(q){q.section='英语'; e.push(q);} }
+    paper = m.concat(c).concat(e);
+  }
+  paper = paper.map(prepQ);
+  paper.forEach((q,i)=>{ q._i=i; });
+  normalizeScore(paper, 100);
+  return paper;
+}
+
+function setMonthlySubject(s){ S.monthly.subject=s; S.monthly.paper=null; S.monthly.submitted=false; save(); render(); }
+function setMonthlyMonth(m){ S.monthly.month=m; S.monthly.paper=null; S.monthly.submitted=false; save(); render(); }
+function genMonthly(){ const st=S.monthly; st.paper = buildMonthlyPaper(st.subject, st.month); st.submitted=false; save(); render(); }
+function selectMonthly(i, oi){ const q=S.monthly.paper[i]; if(!q||q.checked) return; q.sel=oi; save(); render(); }
+function setMonthlyFill(i, v){ const q=S.monthly.paper[i]; if(q) q.fillVal=v; }
+function monthlySelStr(q){ if(q.type==='choice') return (typeof q.sel==='number'&&q.sel>=0)?q.options[q.sel]:''; return (typeof q.fillVal==='string')?q.fillVal.trim():''; }
+function monthlyIsCorrect(q){ return String(monthlySelStr(q))===String(q.ans); }
+function submitMonthly(){ const st=S.monthly; if(!st.paper) return; st.paper.forEach(q=>{q.checked=true;}); st.submitted=true; save(); render(); }
+
+function renderMonthly() {
+  const st = S.monthly;
+  const subjBtns = [['math','🔢 数学'],['chinese','📖 语文'],['english','🔤 英语'],['mixed','📚 综合']]
+    .map(m=>`<button class="btn ${st.subject===m[0]?'btn-primary':'btn-light'}" onclick="setMonthlySubject('${m[0]}')">${m[1]}</button>`).join(' ');
+  const monthBtns = MONTH_ORDER.map(m=>`<button class="btn ${st.month===m?'btn-primary':'btn-light'}" onclick="setMonthlyMonth('${m}')">${MONTH_PLAN[m].label}</button>`).join(' ');
+  let html = hero('monthly','月考密卷','三年级 · 进度同步');
+  html += `<div class="card" style="margin-top:-18px;">
+    <div class="card-header"><span class="icon" style="background:var(--pink)">📅</span><h3>月考密卷</h3>
+      <span class="pill">${st.paper?'已生成':'未生成'}</span></div>
+    <p style="color:var(--text-secondary);font-size:13px;margin-bottom:12px;">按学校教学进度生成每月密卷（参照人教版期中/期末真题结构），只考当月所学单元；做完自动批改、错题自动进错题本。<b>免费预览版</b>，后续可解锁更多月份与视频解析。</p>
+    <div style="margin-bottom:10px;"><div class="tag" style="color:var(--pink)">📆 选择月份</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;">${monthBtns}</div></div>
+    <div style="margin-bottom:12px;"><div class="tag" style="color:var(--pink)">📚 选择学科</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;">${subjBtns}</div></div>
+    <button class="btn btn-success" onclick="genMonthly()">📝 生成 ${MONTH_PLAN[st.month].label} · ${st.subject==='mixed'?'综合':subjName(st.subject)} 密卷</button>
+  `;
+  if (st.paper && st.paper.length) {
+    const total = st.paper.reduce((s,q)=>s+q.score,0);
+    if (!st.submitted) {
+      html += `<div class="section-title" style="margin:16px 0 10px;"><span class="icon" style="background:var(--pink)">📝</span><span>${MONTH_PLAN[st.month].label} · ${st.subject==='mixed'?'综合':subjName(st.subject)}密卷（满分 ${total} 分）</span></div>`;
+      const sections = [];
+      st.paper.forEach((q)=>{ let sec=sections.find(s=>s.name===q.section); if(!sec){sec={name:q.section,items:[]};sections.push(sec);} sec.items.push(q); });
+      sections.forEach(sec=>{
+        if (sec.name) html += `<div class="monthly-sec-title">${sec.name}</div>`;
+        sec.items.forEach(q=>{
+          const showPill = (st.subject==='mixed' || q.subject!=='数学');
+          html += `<div class="form-group q-card" style="margin-bottom:14px;">
+            <div class="q-row"><span class="q-num">${q._i+1}</span>${showPill?`<span class="q-pill" style="background:${subjColor(q.subject)};color:#555;">${q.subject}</span>`:''}<span class="q-stem">${esc(q.q)}</span><span class="q-score">${q.score}分</span></div>
+            ${q.svg?`<div class="monthly-fig">${q.svg}</div>`:''}
+            ${q.passage?`<div class="monthly-passage">${esc(q.passage)}</div>`:''}
+            ${q.type==='choice'
+              ? xscChoiceOpts(q, 'mn'+q._i, 'selectMonthly('+q._i+',', false)
+              : `<input type="text" id="mnf_${q._i}" placeholder="写下答案" oninput="setMonthlyFill(${q._i},this.value)" onkeydown="if(event.key==='Enter')submitMonthly()" style="margin-top:6px;">`}
+          </div>`;
+        });
+      });
+      html += `<div style="margin-top:10px;"><button class="btn btn-success" onclick="submitMonthly()">提交批改</button> <button class="btn btn-light" onclick="genMonthly()">🔄 换一卷</button></div>`;
+    } else {
+      let correct=0; st.paper.forEach(q=>{ if(monthlyIsCorrect(q)) correct++; });
+      const got = st.paper.reduce((s,q)=> s + (monthlyIsCorrect(q)?q.score:0), 0);
+      html += `<div class="quiz-result" style="color:${correct===st.paper.length?'var(--green)':'var(--orange)'};margin:14px 0;">答对 ${correct}/${st.paper.length} 题，得分 <b>${got}/${total}</b> 分${correct===st.paper.length?'，满分过关！+20 积分':''}</div>`;
+      st.paper.forEach((q,i)=>{
+        const ok = monthlyIsCorrect(q);
+        if(!ok) recordError(q.subject, q.q, q.ans, monthlySelStr(q)||'未作答', q.explain, '月考', q.subject);
+        const showPill = (st.subject==='mixed' || q.subject!=='数学');
+        html += `<div class="form-group q-card" style="margin-bottom:12px;${ok?'':'border-color:#ffd0d0'}">
+          <div class="q-row"><span class="q-num">${i+1}</span>${showPill?`<span class="q-pill" style="background:${subjColor(q.subject)};color:#555;">${q.subject}</span>`:''}<span class="q-stem">${esc(q.q)}</span></div>
+          ${q.svg?`<div class="monthly-fig">${q.svg}</div>`:''}
+          ${q.type==='choice'
+            ? xscChoiceOpts(q,'mnr'+i,'selectMonthly('+i+',', true)
+            : `<div style="margin-top:6px;color:${ok?'var(--green)':'var(--red)'};font-weight:600;">${ok?'✅ 答对':'❌ 正确答案：'+esc(q.ans)}</div>`}
+          ${q.explain?`<p style="color:var(--text-secondary);font-size:13px;margin-top:6px;">💡 ${esc(q.explain)}</p>`:''}
+        </div>`;
+      });
+      if (correct===st.paper.length) addPoints(20);
+      html += `<div style="margin-top:10px;"><button class="btn btn-success" onclick="genMonthly()">🔄 再考一次</button></div>`;
+    }
+  } else if (st.paper && !st.paper.length) {
+    html += `<div class="card" style="border:1px dashed #ffd9d9;text-align:center;padding:24px;margin-top:8px;"><p style="color:var(--text-secondary);">该月份暂无可生成题目，换个月份或学科试试。</p></div>`;
+  }
+  html += `</div>`;
+  return html;
+}
+
+
     function render() {
       recalcProgress();
       const navPills = document.getElementById('navPills');
@@ -5138,6 +5349,7 @@ function genChinesePractice(path) {
         think: renderThink,
         mind: renderMind,
         xiaoshengchu: renderXiaoshengchu,
+        monthly: renderMonthly,
       };
       try {
         document.getElementById('main').innerHTML = pages[S.current]();
