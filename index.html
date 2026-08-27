@@ -975,7 +975,7 @@
     ];
 
     const STORAGE_KEY = 'syx-g3-workbench-v1';
-    const APP_VERSION = '2026-08-24-v15-monthly'; // V1.5 月考密卷：进度同步密卷（数学结构化100分含数形结合/语文/英语/综合），参照人教版期中期末卷
+    const APP_VERSION = '2026-08-27-v17-member'; // V1.7 会员核销：月考密卷改为会员专享（hjy3-secure 后端 /api/redeem + /api/exam 下发），数学/语文/英语/综合 28 套密卷
 
     /* 全局错误可视化：任何未捕获的报错都会显示在页面顶部红条，便于排查 */
     function showErr(msg) {
@@ -5145,121 +5145,10 @@ const MONTH_ORDER = ['9','10','11','12','3','4','5'];
 function subjName(id){ return {math:'数学',chinese:'语文',english:'英语',mixed:'综合'}[id]||id; }
 function subjColor(name){ return name==='数学'?'var(--orange-light)':name==='语文'?'var(--pink-light)':'var(--purple-light)'; }
 
-// 按单元采样数学生成器，返回生成后的题目对象数组（已洗牌、去重）
-function monthlyMathItems(sem, units, types) {
-  const out = []; const seen = new Set();
-  const us = examMathPool[sem]; if (!us) return out;
-  units.forEach(u => {
-    const gens = us[u] || [];
-    gens.forEach(g => {
-      for (let k=0;k<5;k++){ try {
-        const it = g();
-        if (!it || it.q==null || it.ans===undefined) continue;
-        if (types && types.indexOf(it.type)<0) continue;
-        const key = it.type+'|'+it.q+'|'+String(it.ans);
-        if (seen.has(key)) continue; seen.add(key);
-        out.push(it);
-      } catch(e){} }
-    });
-  });
-  return shuffle(out);
-}
-function mkMathQ(it, section, score) {
-  const q = {subject:'数学', section, score, q:it.q, explain:it.explain||'', svg:it.svg||'', sel:-1, checked:false, fillVal:''};
-  if (it.type==='judge') { q.type='choice'; q.options=['对','错']; q.ans=String(it.ans); }
-  else if (it.type==='choice') { q.type='choice'; q.options=it.options.map(String); q.ans=String(it.ans); }
-  else { q.type='fill'; q.options=null; q.ans=String(it.ans).trim(); }
-  return q;
-}
-function genMathMonthlyPaper(sem, units) {
-  const paper = [];
-  monthlyMathItems(sem, units, ['fill']).slice(0,10).forEach(it=>paper.push(mkMathQ(it,'一、填空题',2)));
-  monthlyMathItems(sem, units, ['judge']).slice(0,5).forEach(it=>paper.push(mkMathQ(it,'二、判断题',2)));
-  monthlyMathItems(sem, units, ['choice']).slice(0,5).forEach(it=>paper.push(mkMathQ(it,'三、选择题',3)));
-  monthlyMathItems(sem, units, ['calc','figure']).slice(0,10).forEach(it=>paper.push(mkMathQ(it,'四、计算题',3)));
-  // 应用：优先数形结合图形题，其余为解决问题
-  const app = monthlyMathItems(sem, units, ['figure','solve']);
-  const figs = app.filter(x=>x.type==='figure'); const solvs = app.filter(x=>x.type==='solve');
-  figs.concat(solvs).slice(0,5).forEach(it=>paper.push(mkMathQ(it,'五、解决问题',5)));
-  return paper;
-}
-
-// 语文：基础（genChinesePractice 按学期）+ 阅读理解（readingDB 按学期）
-function monthlyPickChinese(sem) {
-  const u = rand(0, curriculum.chinese.semesters[sem].units.length-1);
-  const li = rand(0, curriculum.chinese.semesters[sem].units[u].lessons.length-1);
-  const lp = { sel:{semester:sem,unit:u,lesson:li}, semester:curriculum.chinese.semesters[sem], unit:curriculum.chinese.semesters[sem].units[u], lesson:curriculum.chinese.semesters[sem].units[u].lessons[li] };
-  const arr = genChinesePractice(lp);
-  if (!arr || !arr.length) return null;
-  const it = arr[rand(0, arr.length-1)];
-  return {subject:'语文', type:'choice', q:it.q, options:it.options.map(String), ans:String(it.options[it.correct]), explain:it.explain||'', passage:''};
-}
-function monthlyReadingItems(sem, n) {
-  const keys = Object.keys(readingDB).filter(k=>k.indexOf(sem+'-')===0);
-  shuffle(keys);
-  const out = [];
-  for (const k of keys) {
-    const entry = readingDB[k]; if(!entry||!entry.items) continue;
-    for (const art of entry.items) {
-      const qs = art.questions||[];
-      for (const q of qs) {
-        if (q.q && q.options && q.correct!=null) {
-          out.push({subject:'语文', type:'choice', q:q.q, options:q.options.map(String), ans:String(q.options[q.correct]), explain:'', passage:art.text||entry.text||'', section:'阅读理解', score:3, sel:-1, checked:false, fillVal:''});
-          if (out.length>=n) return out;
-        }
-      }
-    }
-  }
-  return out;
-}
-function monthlyPickEnglishNorm() {
-  const q = xscPickEnglish(); if(!q) return null;
-  q.section='英语综合'; return q;
-}
-
-function prepQ(q){
-  q.sel = (q.sel==null?-1:q.sel);
-  q.checked = false;
-  if(q.fillVal==null) q.fillVal='';
-  if(q.score==null) q.score=0;
-  if(!q.section) q.section='';
-  if(q.svg==null) q.svg='';
-  if(q.passage==null) q.passage='';
-  if(q.explain==null) q.explain='';
-  return q;
-}
-function normalizeScore(paper, total){
-  const n = paper.length; if(!n) return;
-  const base = Math.floor(total/n); let rem = total - base*n;
-  paper.forEach((q,i)=>{ q.score = base + (i<rem?1:0); });
-}
-
-function buildMonthlyPaper(subject, monthKey){
-  const plan = MONTH_PLAN[monthKey]; if(!plan) return [];
-  let paper = [];
-  if (subject==='math') {
-    paper = genMathMonthlyPaper(plan.sem, plan.units);
-  } else if (subject==='chinese') {
-    for (let i=0;i<15;i++){ const q=monthlyPickChinese(plan.sem); if(q){q.section='一、基础知识'; paper.push(q);} }
-    monthlyReadingItems(plan.sem, 10).forEach(q=>paper.push(q));
-  } else if (subject==='english') {
-    for (let i=0;i<25;i++){ const q=monthlyPickEnglishNorm(); if(q){q.section='英语综合'; paper.push(q);} }
-  } else { // 综合：数学 40% + 语文 30% + 英语 30%
-    const m = genMathMonthlyPaper(plan.sem, plan.units).slice(0,14);
-    const c = []; for (let i=0;i<10;i++){ const q=monthlyPickChinese(plan.sem); if(q){q.section='语文'; c.push(q);} }
-    monthlyReadingItems(plan.sem, 5).forEach(q=>c.push(q));
-    const e = []; for (let i=0;i<10;i++){ const q=monthlyPickEnglishNorm(); if(q){q.section='英语'; e.push(q);} }
-    paper = m.concat(c).concat(e);
-  }
-  paper = paper.map(prepQ);
-  paper.forEach((q,i)=>{ q._i=i; });
-  normalizeScore(paper, 100);
-  return paper;
-}
 
 function setMonthlySubject(s){ S.monthly.subject=s; S.monthly.paper=null; S.monthly.submitted=false; save(); render(); }
 function setMonthlyMonth(m){ S.monthly.month=m; S.monthly.paper=null; S.monthly.submitted=false; save(); render(); }
-function genMonthly(){ const st=S.monthly; st.paper = buildMonthlyPaper(st.subject, st.month); st.submitted=false; save(); render(); }
+function genMonthly(){  const st=S.monthly;  if(!syxIsMember()){ showRedeemModal(); return; }  syxFetchPaper(st.subject, st.month).then(paper=>{    if(paper && paper.length){ st.paper = paper; st.submitted=false; save(); render(); }    else if(paper && !paper.length){ st.paper=[]; st.submitted=false; save(); render(); }  });}
 function selectMonthly(i, oi){ const q=S.monthly.paper[i]; if(!q||q.checked) return; q.sel=oi; save(); render(); }
 function setMonthlyFill(i, v){ const q=S.monthly.paper[i]; if(q) q.fillVal=v; }
 function monthlySelStr(q){ if(q.type==='choice') return (typeof q.sel==='number'&&q.sel>=0)?q.options[q.sel]:''; return (typeof q.fillVal==='string')?q.fillVal.trim():''; }
@@ -5275,7 +5164,7 @@ function renderMonthly() {
   html += `<div class="card" style="margin-top:-18px;">
     <div class="card-header"><span class="icon" style="background:var(--pink)">📅</span><h3>月考密卷</h3>
       <span class="pill">${st.paper?'已生成':'未生成'}</span></div>
-    <p style="color:var(--text-secondary);font-size:13px;margin-bottom:12px;">按学校教学进度生成每月密卷（参照人教版期中/期末真题结构），只考当月所学单元；做完自动批改、错题自动进错题本。<b>免费预览版</b>，后续可解锁更多月份与视频解析。</p>
+    <p style="color:var(--text-secondary);font-size:13px;margin-bottom:12px;">按学校教学进度生成每月密卷（参照人教版期中/期末真题结构），只考当月所学单元；做完自动批改、错题自动进错题本。本模块为<b>会员专享密卷</b>，需激活码解锁；激活后按教学进度同步推送当月真题。</p>
     <div style="margin-bottom:10px;"><div class="tag" style="color:var(--pink)">📆 选择月份</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;">${monthBtns}</div></div>
     <div style="margin-bottom:12px;"><div class="tag" style="color:var(--pink)">📚 选择学科</div><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:6px;">${subjBtns}</div></div>
     <button class="btn btn-success" onclick="genMonthly()">📝 生成 ${MONTH_PLAN[st.month].label} · ${st.subject==='mixed'?'综合':subjName(st.subject)} 密卷</button>
@@ -5300,7 +5189,7 @@ function renderMonthly() {
           </div>`;
         });
       });
-      html += `<div style="margin-top:10px;"><button class="btn btn-success" onclick="submitMonthly()">提交批改</button> <button class="btn btn-light" onclick="genMonthly()">🔄 换一卷</button></div>`;
+      html += `<div style="margin-top:10px;"><button class="btn btn-success" onclick="submitMonthly()">提交批改</button> <button class="btn btn-light" onclick="genMonthly()">🔄 重新加载本卷</button></div>`;
     } else {
       let correct=0; st.paper.forEach(q=>{ if(monthlyIsCorrect(q)) correct++; });
       const got = st.paper.reduce((s,q)=> s + (monthlyIsCorrect(q)?q.score:0), 0);
@@ -5319,7 +5208,7 @@ function renderMonthly() {
         </div>`;
       });
       if (correct===st.paper.length) addPoints(20);
-      html += `<div style="margin-top:10px;"><button class="btn btn-success" onclick="genMonthly()">🔄 再考一次</button></div>`;
+      html += `<div style="margin-top:10px;"><button class="btn btn-success" onclick="genMonthly()">🔄 重新加载本卷</button></div>`;
     }
   } else if (st.paper && !st.paper.length) {
     html += `<div class="card" style="border:1px dashed #ffd9d9;text-align:center;padding:24px;margin-top:8px;"><p style="color:var(--text-secondary);">该月份暂无可生成题目，换个月份或学科试试。</p></div>`;
@@ -9404,5 +9293,105 @@ function selectMathChoice(i, oi) {
       });
     }
   </script>
+
+<script>
+/* ===== 舒艺欣会员层（V1.7 接入 hjy3-secure 后端） ===== */
+// 后端地址：agentos 沙箱（会员激活码 + 月考密卷下发）。部署 hjy3-secure 后链接不变。
+// 临时换地址无需改代码：访问 ?api=https://你的后端  或控制台 localStorage.setItem('syx_api_base','https://你的后端')
+const _SYX_OVERRIDE = (new URLSearchParams(location.search).get('api'))
+  || (function(){ try { return localStorage.getItem('syx_api_base') || ''; } catch(e){ return ''; } })();
+const API_BASE = _SYX_OVERRIDE || 'https://a395a487e3db14349.sh2.agentos-app.net';
+const MEMBER_KEY = 'syx-member-token';
+const MEMBER_FP = 'syx-member-fp';
+
+// 设备指纹（简单稳定标识，用于令牌绑定）
+function syxFp(){
+  let fp = localStorage.getItem(MEMBER_FP);
+  if(!fp){
+    fp = 'sx' + Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+    try{ localStorage.setItem(MEMBER_FP, fp); }catch(e){}
+  }
+  return fp;
+}
+function syxToken(){
+  try{ return localStorage.getItem(MEMBER_KEY) || ''; }catch(e){ return ''; }
+}
+function syxSetToken(t){ try{ localStorage.setItem(MEMBER_KEY, t); }catch(e){} }
+function syxIsMember(){ return !!syxToken(); }
+
+// 激活码弹窗
+function showRedeemModal(){
+  const m = document.getElementById('syxRedeemModal');
+  if(m) m.style.display = 'flex';
+}
+function hideRedeemModal(){
+  const m = document.getElementById('syxRedeemModal');
+  if(m) m.style.display = 'none';
+}
+async function syxRedeem(){
+  const input = document.getElementById('syxCodeInput');
+  const err = document.getElementById('syxRedeemErr');
+  const code = (input.value || '').trim().toUpperCase();
+  if(!code){ err.textContent = '请输入激活码'; return; }
+  err.textContent = '验证中…';
+  try{
+    const r = await fetch(API_BASE + '/api/redeem', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({code, fp: syxFP()})
+    }).then(x=>x.json());
+    if(r.ok && r.token){
+      syxSetToken(r.token);
+      err.textContent = '';
+      hideRedeemModal();
+      // 重新触发当前月考动作
+      if(S && S.page==='monthly'){ genMonthly(); }
+    } else {
+      err.textContent = r.msg || '激活码无效';
+    }
+  }catch(e){
+    err.textContent = '网络错误，无法连接会员服务';
+  }
+}
+
+// 拉取月考密卷（需会员令牌）
+async function syxFetchPaper(subject, monthKey){
+  const token = syxToken();
+  if(!token) { showRedeemModal(); return null; }
+  const unit = subject + '-' + monthKey;
+  const url = API_BASE + '/api/exam?token=' + encodeURIComponent(token)
+            + '&fp=' + encodeURIComponent(syxFp())
+            + '&subject=shuyixin&grade=monthly&unit=' + encodeURIComponent(unit);
+  const r = await fetch(url).then(x=>x.json());
+  if(r.ok && Array.isArray(r.exam)){
+    // 还原渲染所需字段
+    return r.exam.map((q,i)=>{
+      q.sel = (q.sel==null?-1:q.sel);
+      q.checked = false;
+      if(q.fillVal==null) q.fillVal='';
+      if(q.score==null) q.score=0;
+      q._i = i;
+      return q;
+    });
+  }
+  if(r.need){ showRedeemModal(); }
+  return null;
+}
+
+</script>
+
+<!-- 会员激活码弹窗 -->
+<div id="syxRedeemModal" style="display:none;position:fixed;inset:0;background:rgba(40,20,50,.55);z-index:9999;align-items:center;justify-content:center;padding:20px;">
+  <div style="background:#fff;border-radius:20px;max-width:380px;width:100%;padding:26px 22px;box-shadow:0 12px 40px rgba(0,0,0,.25);font-family:inherit;">
+    <div style="text-align:center;font-size:34px;margin-bottom:6px;">🔓</div>
+    <h3 style="margin:0 0 4px;text-align:center;color:#5b2a6b;font-size:20px;">解锁月考密卷</h3>
+    <p style="margin:0 0 16px;text-align:center;color:#888;font-size:13px;">输入激活码，立即开通会员专享密卷</p>
+    <input id="syxCodeInput" placeholder="例如 HJY3-Y-XXXXXX" inputmode="text" autocapitalize="characters"
+      style="width:100%;box-sizing:border-box;padding:13px 14px;border:2px solid #e3c8ee;border-radius:12px;font-size:16px;letter-spacing:1px;text-align:center;outline:none;" />
+    <div id="syxRedeemErr" style="color:#e0395b;font-size:13px;min-height:18px;margin:8px 2px 4px;text-align:center;"></div>
+    <button onclick="syxRedeem()" style="width:100%;padding:13px;border:none;border-radius:12px;background:linear-gradient(135deg,#ff9ec7,#b98cff);color:#fff;font-size:16px;font-weight:700;cursor:pointer;">激活并解锁</button>
+    <button onclick="hideRedeemModal()" style="width:100%;padding:10px;margin-top:8px;border:none;background:transparent;color:#999;font-size:14px;cursor:pointer;">暂不激活</button>
+  </div>
+</div>
+
 </body>
 </html>
