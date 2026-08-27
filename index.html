@@ -9373,6 +9373,14 @@ async function syxFetchPaper(subject, monthKey){
       return q;
     });
   }
+  if(r.scope_mismatch){
+    // 激活码不属于舒艺欣（如 HJY3 通用码），清除无效令牌并提示专用码
+    syxSetToken('');
+    const err = document.getElementById('syxRedeemErr');
+    if(err) err.textContent = r.msg || '该激活码不适用于舒艺欣，请使用舒艺欣专用码';
+    showRedeemModal();
+    return null;
+  }
   if(r.need){ showRedeemModal(); }
   return null;
 }
