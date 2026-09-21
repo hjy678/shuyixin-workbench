@@ -9298,7 +9298,12 @@ function selectMathChoice(i, oi) {
 /* ===== 舒艺欣会员层（V1.9 后端核销版：一人一码 + scope=shuyixin 专用） ===== */
 const _SYX_OVERRIDE = (new URLSearchParams(location.search).get('api'))
   || (function(){ try { return localStorage.getItem('syx_api_base') || ''; } catch(e){ return ''; } })();
-const API_BASE = _SYX_OVERRIDE || 'https://a395a487e3db14349.sh2.agentos-app.net';
+const ACT_BACKEND = 'https://hjy3-member-hub.app.workbuddy.host';
+const RELAY_BASE = 'https://hjy-apps-d5g16nx4y5a5a7fb6-1492786962.ap-shanghai.app.tcloudbase.com/relay';
+function isWx(){ return /MicroMessenger/i.test(navigator.userAgent||''); }
+// 统一到新中台：微信内走中继(网关按微信UA拦直连)，非微信直连；?api= 仍可手动覆盖
+const API_BASE = _SYX_OVERRIDE || (isWx() ? RELAY_BASE : ACT_BACKEND);
+const HUB_SYSTEM = 'shuyixin';
 const MEMBER_KEY = 'syx-member-token';
 const MEMBER_FP = 'syx-member-fp';
 
@@ -9328,56 +9333,39 @@ async function syxRedeem(){
   const code = (input.value || '').trim().toUpperCase();
   if(!code){ err.textContent = '请输入激活码'; return; }
   err.textContent = '验证中…';
-  try{
-    const r = await fetch(API_BASE + '/api/redeem', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({code, fp: syxFp()})
-    }).then(x=>x.json());
-    if(r.ok && r.token){
-      syxSetToken(r.token);
-      err.textContent = '';
-      hideRedeemModal();
-      if(S && S.page==='monthly'){ genMonthly(); }
-    } else if(r.already_used){
-      err.textContent = '该激活码已被使用';
-    } else if(r.scope_mismatch){
-      err.textContent = '请使用舒艺欣专用激活码';
-    } else {
-      err.textContent = r.msg || '激活码无效';
+  // 三通道降级：微信内 中继→直连；非微信 直连→中继（拿到业务响应即终局，不再重试）
+  const relay = RELAY_BASE ? RELAY_BASE.replace(/\/$/,'') : '';
+  const order = isWx() ? [relay, ACT_BACKEND] : [ACT_BACKEND, relay];
+  const bases = order.filter(Boolean);
+  const reasons = { not_found:'激活码无效，请检查后重试', void:'该激活码已作废', already_used:'该激活码已被使用（一码一用）', blacklisted:'该激活码已被停用', wrong_system:'请使用舒艺欣专用激活码' };
+  for(let bi=0; bi<bases.length; bi++){
+    try{
+      const r = await fetch(bases[bi] + '/api/redeem', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({code: code, fp: syxFp(), system: HUB_SYSTEM})
+      }).then(x=>x.json());
+      if(r.ok && r.token){
+        syxSetToken(r.token);
+        try{ localStorage.setItem('syx-member-level', r.level||''); localStorage.setItem('syx-member-expire', String(r.expireAt||0)); }catch(e){}
+        err.textContent = '';
+        hideRedeemModal();
+        if(S && S.page==='monthly'){ genMonthly(); }
+        return;
+      }
+      err.textContent = reasons[r.reason] || r.msg || '激活码无效';
+      return;
+    }catch(e){
+      if(bi === bases.length-1){ err.textContent = '网络错误，无法连接会员服务'; }
     }
-  }catch(e){
-    err.textContent = '网络错误，无法连接会员服务';
   }
-}
-
-async function syxFetchPaper(subject, monthKey){
+}async function syxFetchPaper(subject, monthKey){
   const token = syxToken();
   if(!token){ showRedeemModal(); return null; }
-  const unit = subject + '-' + monthKey;
-  const url = API_BASE + '/api/exam?token=' + encodeURIComponent(token)
-            + '&fp=' + encodeURIComponent(syxFp())
-            + '&subject=shuyixin&grade=monthly&unit=' + encodeURIComponent(unit);
-  const r = await fetch(url).then(x=>x.json());
-  if(r.ok && Array.isArray(r.exam)){
-    return r.exam.map((q,i)=>{
-      q.sel = (q.sel==null?-1:q.sel);
-      q.checked = false;
-      if(q.fillVal==null) q.fillVal='';
-      if(q.score==null) q.score=0;
-      q._i = i;
-      return q;
-    });
-  }
-  if(r.scope_mismatch){
-    const err = document.getElementById('syxRedeemErr');
-    if(err) err.textContent = '请使用舒艺欣专用激活码';
-    showRedeemModal();
-  } else if(r.need){
-    showRedeemModal();
-  }
-  return null;
-}
-</script>
+  // 题库迁移占位：舒艺欣月度密卷题目正在迁移到新中台（原老中台 /api/exam 已弃用）。
+  // 数据内置完成前返回空卷并提示，避免回源老中台导致功能失效。
+  if(typeof toast==='function'){ try{ toast('舒艺欣月度密卷题库迁移中，暂不可用'); }catch(e){} }
+  return [];
+}</script>
 
 <!-- 会员激活码弹窗 -->
 <div id="syxRedeemModal" style="display:none;position:fixed;inset:0;background:rgba(40,20,50,.55);z-index:9999;align-items:center;justify-content:center;padding:20px;">
