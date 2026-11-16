@@ -9299,6 +9299,16 @@ function selectMathChoice(i, oi) {
 const _SYX_OVERRIDE = (new URLSearchParams(location.search).get('api'))
   || (function(){ try { return localStorage.getItem('syx_api_base') || ''; } catch(e){ return ''; } })();
 const ACT_BACKEND = 'https://hjy3-member-hub.app.workbuddy.host';
+
+  // [HUB-SC 2026-11-16] 网关要求中台请求带 sharecode，仅装饰中台 URL
+  var HUB_SHARECODE = 'LOFWNWWOVH';
+  function hubSc(u) {
+    u = String(u);
+    if (u.indexOf('hjy3-member-hub.app.workbuddy.host') < 0) return u;
+    if (u.indexOf('sharecode=') >= 0) return u;
+    return u + (u.indexOf('?') >= 0 ? '&' : '?') + 'sharecode=' + HUB_SHARECODE;
+  }
+
 const RELAY_BASE = 'https://hjy-apps-d5g16nx4y5a5a7fb6-1492786962.ap-shanghai.app.tcloudbase.com/relay';
 function isWx(){ return /MicroMessenger/i.test(navigator.userAgent||''); }
 // 统一到新中台：微信内走中继(网关按微信UA拦直连)，非微信直连；?api= 仍可手动覆盖
@@ -9340,7 +9350,7 @@ async function syxRedeem(){
   const reasons = { not_found:'激活码无效，请检查后重试', void:'该激活码已作废', already_used:'该激活码已被使用（一码一用）', blacklisted:'该激活码已被停用', wrong_system:'请使用舒艺欣专用激活码' };
   for(let bi=0; bi<bases.length; bi++){
     try{
-      const r = await fetch(bases[bi] + '/api/redeem', {
+      const r = await fetch(hubSc(bases[bi] + '/api/redeem'), {
         method:'POST', headers:{'Content-Type':'application/json'},
         body: JSON.stringify({code: code, fp: syxFp(), system: HUB_SYSTEM})
       }).then(x=>x.json());
